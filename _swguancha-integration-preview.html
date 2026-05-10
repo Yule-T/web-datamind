@@ -1,0 +1,752 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <title>swguancha 整合 DataMind · 设计稿</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <style>
+      body {
+        background: #f5f6f8;
+        font-family: "Inter", "Noto Sans SC", system-ui, sans-serif;
+        padding: 24px;
+        color: #2d3748;
+      }
+      .wrap { max-width: 1280px; margin: 0 auto; }
+      .anno {
+        font-size: 13px;
+        color: #5a6478;
+        margin: 24px 0 12px;
+      }
+      .anno b { color: #2d3748; }
+      h2.section {
+        font-size: 16px;
+        font-weight: 700;
+        color: #2d3748;
+        letter-spacing: 0.04em;
+        margin: 36px 0 12px;
+      }
+      .frame {
+        background: #fff;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 8px 24px -16px rgba(45, 55, 72, 0.18);
+      }
+
+      /* === parent site mock — top nav === */
+      .parent-nav {
+        background: #fff;
+        border-bottom: 1px solid #eceef2;
+        padding: 14px 32px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .parent-nav .logo {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        font-size: 18px;
+        color: #2d3748;
+      }
+      .parent-nav .logo .mark {
+        width: 30px;
+        height: 30px;
+        background: #ff7a45;
+        border-radius: 6px;
+        position: relative;
+      }
+      .parent-nav .logo .mark::after {
+        content: "";
+        position: absolute;
+        inset: 6px;
+        background: #fff;
+        clip-path: polygon(50% 100%, 0 0, 100% 0);
+      }
+      .parent-nav .nav-items {
+        display: flex;
+        gap: 32px;
+        align-items: center;
+      }
+      .parent-nav .nav-items a {
+        font-size: 14px;
+        color: #5a6478;
+        position: relative;
+        padding: 6px 2px;
+      }
+      .parent-nav .nav-items a.active {
+        color: #ff7a45;
+        font-weight: 600;
+      }
+      .parent-nav .nav-items a.active::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -16px;
+        height: 2px;
+        background: #ff7a45;
+      }
+      .parent-nav .right {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+      }
+      .parent-nav .vip-btn {
+        font-size: 13px;
+        color: #f7b500;
+        font-weight: 600;
+      }
+      .parent-nav .login-btn {
+        background: linear-gradient(135deg, #2f6bff, #4a85ff);
+        color: #fff;
+        font-size: 13px;
+        padding: 8px 18px;
+        border-radius: 8px;
+        font-weight: 500;
+      }
+
+      /* === parent hero === */
+      .parent-hero {
+        background:
+          linear-gradient(180deg, rgba(28, 76, 178, 0.92) 0%, rgba(56, 119, 217, 0.85) 100%),
+          #1c4cb2;
+        padding: 72px 32px;
+        text-align: center;
+        position: relative;
+      }
+      .parent-hero h1 {
+        color: #fff;
+        font-size: 34px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 32px;
+      }
+
+      .tabs-row {
+        display: flex;
+        gap: 6px;
+        justify-content: center;
+        margin-bottom: 0;
+      }
+      .tab {
+        font-size: 15px;
+        color: rgba(255, 255, 255, 0.85);
+        padding: 10px 20px;
+        font-weight: 500;
+        position: relative;
+        cursor: pointer;
+        border-radius: 6px 6px 0 0;
+      }
+      .tab.active {
+        background: #fff;
+        color: #2f6bff;
+        font-weight: 600;
+      }
+      .tab.active::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        bottom: -8px;
+        transform: translateX(-50%);
+        width: 0;
+        height: 0;
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-top: 8px solid #fff;
+      }
+      .tab .tag-new {
+        position: absolute;
+        top: -8px;
+        right: -6px;
+        font-size: 10px;
+        background: #ff5252;
+        color: #fff;
+        padding: 1px 6px;
+        border-radius: 8px;
+      }
+      .tab.tab-datamind {
+        background: rgba(255, 255, 255, 0.12);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .tab.tab-datamind:hover {
+        background: rgba(255, 255, 255, 0.22);
+      }
+      .tab.tab-datamind .arr {
+        opacity: 0.85;
+      }
+      .tab.tab-datamind .ai-badge {
+        font-size: 10px;
+        font-weight: 700;
+        background: linear-gradient(135deg, #0e80f0, #00d4ff);
+        color: #fff;
+        padding: 1.5px 6px;
+        border-radius: 4px;
+        letter-spacing: 0.04em;
+      }
+
+      .search-row {
+        margin-top: 32px;
+        background: #fff;
+        border-radius: 8px;
+        max-width: 920px;
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        align-items: center;
+        padding: 6px;
+        gap: 6px;
+      }
+      .search-row input {
+        flex: 1;
+        border: none;
+        outline: none;
+        padding: 14px 18px;
+        font-size: 14px;
+        color: #2d3748;
+      }
+      .search-row .go {
+        background: #ff7a45;
+        color: #fff;
+        font-weight: 600;
+        padding: 12px 36px;
+        border-radius: 6px;
+      }
+      .search-row .adv {
+        color: #5a6478;
+        font-size: 13px;
+        padding: 0 14px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .quick {
+        margin-top: 18px;
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.85);
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+      }
+      .quick span:first-child {
+        color: rgba(255, 255, 255, 0.6);
+      }
+      .quick a {
+        color: rgba(255, 255, 255, 0.92);
+      }
+
+      /* === DataMind hover preview card on tab === */
+      .preview-card {
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-top: 24px;
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px 28px;
+        width: 560px;
+        box-shadow: 0 24px 60px -20px rgba(45, 55, 72, 0.4);
+        text-align: left;
+        display: none;
+      }
+      .preview-card.show {
+        display: block;
+      }
+      .preview-card .pc-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+      .preview-card .pc-logo {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, #0e80f0, #00d4ff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+      }
+      .preview-card .pc-title {
+        font-size: 17px;
+        font-weight: 700;
+        color: #2d3748;
+      }
+      .preview-card .pc-sub {
+        font-size: 13px;
+        color: #5a6478;
+        margin-top: 2px;
+      }
+      .preview-card .pc-feats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        margin-top: 10px;
+        margin-bottom: 18px;
+      }
+      .preview-card .pc-feats .f {
+        display: flex;
+        gap: 8px;
+        align-items: flex-start;
+      }
+      .preview-card .pc-feats .f i {
+        color: #0e80f0;
+        margin-top: 2px;
+        flex-shrink: 0;
+      }
+      .preview-card .pc-feats .f-text {
+        font-size: 12.5px;
+        color: #2d3748;
+        line-height: 1.5;
+      }
+      .preview-card .pc-cta {
+        background: #0e80f0;
+        color: #fff;
+        font-size: 13.5px;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-weight: 600;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      /* === Pricing tab variant === */
+      .pricing-tabs {
+        background: #fff;
+        padding: 18px;
+        display: flex;
+        gap: 8px;
+        justify-content: center;
+        border-bottom: 1px solid #eceef2;
+      }
+      .pricing-tabs .pt {
+        padding: 10px 22px;
+        border-radius: 999px;
+        font-size: 14px;
+        color: #5a6478;
+        font-weight: 500;
+        cursor: pointer;
+        border: 1px solid transparent;
+      }
+      .pricing-tabs .pt.active {
+        background: #2f6bff;
+        color: #fff;
+      }
+      .pricing-tabs .pt-datamind {
+        background: linear-gradient(135deg, #0e80f0, #00d4ff);
+        color: #fff;
+        position: relative;
+      }
+      .pricing-tabs .pt-datamind::before {
+        content: "AI";
+        position: absolute;
+        top: -8px;
+        right: -8px;
+        font-size: 9px;
+        font-weight: 700;
+        background: #ff5252;
+        color: #fff;
+        padding: 2px 6px;
+        border-radius: 4px;
+      }
+
+      .dm-pricing-grid {
+        padding: 28px;
+        background: linear-gradient(180deg, #f7faff 0%, #fff 80%);
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+      }
+      .dm-tier {
+        background: #fff;
+        border: 1px solid #eceef2;
+        border-radius: 16px;
+        padding: 24px;
+      }
+      .dm-tier.featured {
+        border: 2px solid #0e80f0;
+        position: relative;
+        box-shadow: 0 16px 40px -20px rgba(14, 128, 240, 0.3);
+      }
+      .dm-tier .tier-badge {
+        position: absolute;
+        top: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #0e80f0;
+        color: #fff;
+        font-size: 11px;
+        padding: 3px 10px;
+        border-radius: 999px;
+      }
+      .dm-tier .name { font-size: 13px; color: #5a6478; margin-bottom: 6px; }
+      .dm-tier .tagline { font-size: 13px; font-weight: 600; color: #2d3748; margin-bottom: 18px; }
+      .dm-tier .price {
+        font-size: 32px;
+        font-weight: 600;
+        color: #2d3748;
+        letter-spacing: -0.02em;
+      }
+      .dm-tier.featured .price { color: #0e80f0; }
+      .dm-tier .price .unit { font-size: 12px; color: #8b95a8; font-weight: 400; }
+      .dm-tier .feats {
+        margin-top: 16px;
+        font-size: 12.5px;
+        color: #5a6478;
+        line-height: 1.9;
+      }
+      .dm-tier .feats li {
+        display: flex;
+        gap: 6px;
+        align-items: flex-start;
+      }
+      .dm-tier .feats li i { color: #0e80f0; margin-top: 4px; flex-shrink: 0; }
+      .dm-tier .buy {
+        margin-top: 18px;
+        display: block;
+        text-align: center;
+        background: #f5f6f8;
+        color: #2d3748;
+        padding: 9px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .dm-tier.featured .buy {
+        background: #0e80f0;
+        color: #fff;
+      }
+
+      /* DataMind feature banner above pricing grid */
+      .dm-banner {
+        margin: 0 28px 0;
+        padding: 24px 28px;
+        background: linear-gradient(135deg, #0e80f0 0%, #0066d6 100%);
+        color: #fff;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 28px;
+        position: relative;
+        overflow: hidden;
+      }
+      .dm-banner::before {
+        content: "";
+        position: absolute;
+        right: -100px;
+        top: -50px;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 60%);
+      }
+      .dm-banner h3 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+      .dm-banner p { font-size: 13px; opacity: 0.9; max-width: 480px; line-height: 1.6; }
+      .dm-banner .cta {
+        background: #fff;
+        color: #0e80f0;
+        padding: 10px 22px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 600;
+        white-space: nowrap;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
+        z-index: 1;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="wrap">
+      <p class="anno">
+        <b>背景：</b>swguancha.com
+        是数位的母品牌站，DataMind 是数位旗下的 AI
+        二级产品。下面分两块出稿：① 母站首页 hero 加 "DataMind" 入口（点击跳转 DataMind Overview）；② 母站定价页加 "DataMind 订阅" tab（露出 4 档 SKU）。
+      </p>
+
+      <h2 class="section">① 母站首页 · Hero 入口（推荐两个方向）</h2>
+
+      <p class="anno">
+        <b>方向 A · 同列追加</b>：把 DataMind 当成一个特殊 tab，放在原来 6 个查 tab 之后，用差异化样式明确"它跳走，不是一个搜索分类"。
+      </p>
+
+      <div class="frame">
+        <div class="parent-nav">
+          <div class="logo"><span class="mark"></span>数位观察</div>
+          <div class="nav-items">
+            <a class="active">首页</a><a>商业数据</a><a>开店选址</a
+            ><a>研究报告</a><a>商业观察</a>
+          </div>
+          <div class="right">
+            <span class="vip-btn">👑 开通VIP</span>
+            <span class="login-btn">登录/注册</span>
+          </div>
+        </div>
+        <div class="parent-hero">
+          <h1>查线下数据，就上数位观察</h1>
+          <div class="tabs-row">
+            <div class="tab active">查城市</div>
+            <div class="tab">查区域</div>
+            <div class="tab">查商业存活<span class="tag-new">新</span></div>
+            <div class="tab">查商场</div>
+            <div class="tab">查品牌</div>
+            <div class="tab">查客群</div>
+            <div
+              class="tab tab-datamind"
+              onmouseover="document.getElementById('pc-a').classList.add('show')"
+              onmouseout="document.getElementById('pc-a').classList.remove('show')"
+            >
+              <span class="ai-badge">AI</span>
+              DataMind
+              <i data-lucide="arrow-up-right" class="w-3.5 h-3.5 arr"></i>
+              <div class="preview-card" id="pc-a">
+                <div class="pc-head">
+                  <div class="pc-logo">
+                    <i data-lucide="sparkles" class="w-5 h-5"></i>
+                  </div>
+                  <div>
+                    <div class="pc-title">DataMind · AI 数据分析助手</div>
+                    <div class="pc-sub">数位旗下 AI 产品 · 桌面客户端</div>
+                  </div>
+                </div>
+                <div class="pc-feats">
+                  <div class="f">
+                    <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                    <span class="f-text">本地文件直接读取，敏感数据不出本地</span>
+                  </div>
+                  <div class="f">
+                    <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                    <span class="f-text">自然语言提问，AI 自动出图、出报告</span>
+                  </div>
+                  <div class="f">
+                    <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                    <span class="f-text">复用数位的商业地理数据资产</span>
+                  </div>
+                  <div class="f">
+                    <i data-lucide="check" class="w-3.5 h-3.5"></i>
+                    <span class="f-text">定时任务、产物归档一应俱全</span>
+                  </div>
+                </div>
+                <a class="pc-cta">
+                  了解 DataMind
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="search-row">
+            <input placeholder="输入城市数据，如：GDP、人口、面积等" />
+            <span class="adv"
+              ><i data-lucide="search" class="w-3.5 h-3.5"></i> 高级搜索</span
+            >
+            <button class="go">查一下</button>
+          </div>
+          <div class="quick">
+            <span>大家在查：</span><a>全国人口排名</a><a>城市统计年鉴</a><a
+              >全国GDP前十的城市</a
+            ><a>城市宏观数据</a>
+          </div>
+        </div>
+      </div>
+
+      <p class="anno" style="margin-top: 14px">
+        <b>关键设计：</b>① 用半透明描边区别于纯白 active tab — 暗示"它不是同一类"；② 加 AI 渐变小标 + ↗ 箭头 — 明示跳转外站/产品；③ Hover 时弹出 560×auto 的产品预览卡（含 logo / slogan / 4 项核心能力 / CTA）减少跳转的"风险感"。
+      </p>
+
+      <p class="anno" style="margin-top: 30px">
+        <b>方向 B · 独立色块带 banner</b>：tab 行右侧加一条独立 DataMind 入口条（不参与 tab 切换），更"侧边推荐位"感。占位更明确。
+      </p>
+
+      <div class="frame">
+        <div class="parent-nav">
+          <div class="logo"><span class="mark"></span>数位观察</div>
+          <div class="nav-items">
+            <a class="active">首页</a><a>商业数据</a><a>开店选址</a
+            ><a>研究报告</a><a>商业观察</a>
+          </div>
+          <div class="right">
+            <span class="vip-btn">👑 开通VIP</span>
+            <span class="login-btn">登录/注册</span>
+          </div>
+        </div>
+        <div class="parent-hero" style="padding-bottom: 88px">
+          <h1>查线下数据，就上数位观察</h1>
+
+          <!-- DataMind 顶部独立条 -->
+          <div style="max-width: 920px; margin: 0 auto 22px;">
+            <div
+              style="
+                background: linear-gradient(90deg, rgba(14,128,240,0.85), rgba(0,212,255,0.85));
+                color: #fff;
+                border-radius: 999px;
+                padding: 10px 18px 10px 14px;
+                display: inline-flex;
+                align-items: center;
+                gap: 12px;
+                font-size: 13px;
+                box-shadow: 0 6px 20px -8px rgba(0,0,0,0.3);
+                cursor: pointer;
+              "
+            >
+              <span
+                style="
+                  background: #fff;
+                  color: #0e80f0;
+                  font-size: 10px;
+                  font-weight: 700;
+                  padding: 2px 7px;
+                  border-radius: 4px;
+                "
+                >新品 / AI</span
+              >
+              <span style="font-weight: 600;">DataMind</span>
+              <span style="opacity: 0.9;">— 用 AI 在你电脑上完成下一份数据分析</span>
+              <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+            </div>
+          </div>
+
+          <div class="tabs-row">
+            <div class="tab active">查城市</div>
+            <div class="tab">查区域</div>
+            <div class="tab">查商业存活<span class="tag-new">新</span></div>
+            <div class="tab">查商场</div>
+            <div class="tab">查品牌</div>
+            <div class="tab">查客群</div>
+          </div>
+          <div class="search-row">
+            <input placeholder="输入城市数据，如：GDP、人口、面积等" />
+            <span class="adv"
+              ><i data-lucide="search" class="w-3.5 h-3.5"></i> 高级搜索</span
+            >
+            <button class="go">查一下</button>
+          </div>
+        </div>
+      </div>
+
+      <p class="anno" style="margin-top: 14px">
+        <b>对比：</b>方向 A 把 DataMind 嵌进数据查询的 tab 行，曝光率高，但要承受"我不是搜索功能"的语义错位；方向 B 把它独立成一条胶囊条，语义更清楚，但曝光不如方向 A。<br />
+        <b>个人建议：</b>方向 A，搭配差异化样式 + hover 预览卡，曝光优先。
+      </p>
+
+      <h2 class="section">② 母站定价页 · 加 DataMind 订阅 tab</h2>
+
+      <p class="anno">
+        <b>设计思路：</b>母站现有定价 tab（数据查询 / VIP / 企业 等）后追加 "DataMind 订阅"，切到该 tab 时上方放一条 DataMind 品牌引导条 + 4 档 SKU 卡片，最右下角"了解更多"跳产品页。
+      </p>
+
+      <div class="frame">
+        <div class="parent-nav">
+          <div class="logo"><span class="mark"></span>数位观察</div>
+          <div class="nav-items">
+            <a>首页</a><a>商业数据</a><a>开店选址</a><a>研究报告</a
+            ><a>商业观察</a><a class="active">定价</a>
+          </div>
+          <div class="right">
+            <span class="vip-btn">👑 开通VIP</span>
+            <span class="login-btn">登录/注册</span>
+          </div>
+        </div>
+
+        <div class="pricing-tabs">
+          <div class="pt">数据查询会员</div>
+          <div class="pt active">VIP 订阅</div>
+          <div class="pt">企业方案</div>
+          <div class="pt pt-datamind">DataMind 订阅</div>
+        </div>
+
+        <!-- DataMind banner -->
+        <div style="padding: 28px 28px 0;">
+          <div class="dm-banner">
+            <div>
+              <h3>DataMind · AI 数据分析助手</h3>
+              <p>数位旗下 AI 产品。本地直读 + 商业地理数据库 + 自动出图出报告。订阅后桌面端开箱即用。</p>
+            </div>
+            <a class="cta">
+              了解完整能力
+              <i data-lucide="arrow-up-right" class="w-3.5 h-3.5"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="dm-pricing-grid">
+          <div class="dm-tier">
+            <div class="name">PLAN 01 · BASIC</div>
+            <div class="tagline">日常探索</div>
+            <div class="price">¥398<span class="unit"> / 月</span></div>
+            <ul class="feats">
+              <li><i data-lucide="check" class="w-3 h-3"></i><span>更多对话额度</span></li>
+              <li><i data-lucide="check" class="w-3 h-3"></i><span>商业地理数据库</span></li>
+              <li><i data-lucide="check" class="w-3 h-3"></i><span>数据清洗 · 多源融合</span></li>
+              <li><i data-lucide="check" class="w-3 h-3"></i><span>商业地图 · 空间分析</span></li>
+            </ul>
+            <span class="buy">选择此方案</span>
+          </div>
+
+          <div class="dm-tier featured">
+            <span class="tier-badge">★ 最受欢迎</span>
+            <div class="name" style="color: #0066d6">PLAN 02 · PRO</div>
+            <div class="tagline">效率升级</div>
+            <div class="price">¥698<span class="unit"> / 月</span></div>
+            <ul class="feats">
+              <li><i data-lucide="check" class="w-3 h-3"></i><span><b>4 ×</b> 对话额度</span></li>
+              <li><i data-lucide="check" class="w-3 h-3"></i><span>商业地理数据库</span></li>
+              <li><i data-lucide="check" class="w-3 h-3"></i><span>数据清洗 · 多源融合</span></li>
+              <li><i data-lucide="check" class="w-3 h-3"></i><span>商业地图 · 空间分析</span></li>
+            </ul>
+            <span class="buy">立即订阅</span>
+          </div>
+
+          <div class="dm-tier">
+            <div class="name">PLAN 03 · MAX</div>
+            <div class="tagline">高强度使用</div>
+            <div class="price">¥998<span class="unit"> / 月</span></div>
+            <ul class="feats">
+              <li><i data-lucide="check" class="w-3 h-3"></i><span><b>10 ×</b> 对话额度</span></li>
+              <li><i data-lucide="check" class="w-3 h-3"></i><span>商业地理数据库</span></li>
+              <li><i data-lucide="check" class="w-3 h-3"></i><span>优先队列</span></li>
+              <li><i data-lucide="check" class="w-3 h-3"></i><span>商业地图 · 空间分析</span></li>
+            </ul>
+            <span class="buy">选择此方案</span>
+          </div>
+
+          <div class="dm-tier">
+            <div class="name">PLAN 04 · ULTRA</div>
+            <div class="tagline">全能尊享</div>
+            <div class="price">¥1,998<span class="unit"> / 月</span></div>
+            <ul class="feats">
+              <li><i data-lucide="check" class="w-3 h-3"></i><span><b>20 ×</b> 对话额度</span></li>
+              <li><i data-lucide="check" class="w-3 h-3"></i><span>商业地理数据库</span></li>
+              <li><i data-lucide="check" class="w-3 h-3"></i><span>优先队列</span></li>
+              <li><i data-lucide="check" class="w-3 h-3"></i><span>1V1 专属客服</span></li>
+            </ul>
+            <span class="buy">选择此方案</span>
+          </div>
+        </div>
+      </div>
+
+      <p class="anno" style="margin-top: 14px">
+        <b>关键点：</b>① DataMind tab 用品牌蓝渐变 + "AI" 角标差异化（区别于母站的 VIP 橙黄色调）；② tab 切换后顶部固定一条 DataMind 引导横幅，让用户第一眼就知道"这是另一条产品线，订阅后是桌面端"；③ 4 档 SKU 卡片样式简化版，与母站定价页面排版协调，但 PRO 档的"最受欢迎"用 DataMind 蓝来强化品牌认知；④ 每张卡的 CTA 跳转可以是"加入购物车"或"去 DataMind 站完成订阅"，看支付链路怎么打通。
+      </p>
+
+      <p style="color: #8b95a8; font-size: 12px; margin-top: 28px">
+        看完反馈：① 首页选方向 A 还是 B；② 定价页 tab 名是否要改（DataMind / DataMind 订阅 / AI 助手 / DataMind 桌面版）；③ 支付链路：母站统一收银 还是 跳到 DataMind 自己的购买页。
+      </p>
+    </div>
+
+    <script>
+      lucide.createIcons();
+    </script>
+  </body>
+</html>

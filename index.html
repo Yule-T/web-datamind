@@ -1,0 +1,2793 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DataMind · 像分析师一样工作的 AI 数据助手</title>
+    <link rel="icon" type="image/png" href="./static/logo/logo-icon.png" />
+    <link rel="shortcut icon" type="image/png" href="./static/logo/logo-icon.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""
+    />
+    <script
+      src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+      integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+      crossorigin=""
+    ></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              paper: "#FAFAFB",
+              surface: "#F1F2F4",
+              surface2: "#E6E8EC",
+              ink: "#2D3748",
+              ink2: "#2D3142",
+              sub: "#5A6478",
+              mute: "#8B95A8",
+              line: "#E5E7EB",
+              line2: "#D1D5DB",
+              brand: "#0E80F0",
+              brandDeep: "#0066D6",
+              brandSoft: "#E6F2FE",
+            },
+            fontFamily: {
+              sans: ["Inter", "Noto Sans SC", "system-ui", "sans-serif"],
+            },
+            borderRadius: { xl3: "20px", xl4: "28px" },
+          },
+        },
+      };
+    </script>
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: #ffffff;
+        color: #2D3748;
+        font-family: "Inter", "Noto Sans SC", system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        letter-spacing: -0.01em;
+      }
+      .display {
+        letter-spacing: -0.025em;
+        font-weight: 500;
+      }
+
+      .card {
+        background: #ffffff;
+        border: 1px solid #eceef2;
+        border-radius: 24px;
+        transition:
+          transform 0.25s ease,
+          background 0.25s ease,
+          border-color 0.25s ease;
+      }
+      .card:hover {
+        background: #fafbfc;
+      }
+      .card-deep {
+        background: #f5f6f8;
+        border-radius: 24px;
+      }
+      .card-paper {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+      }
+      .step-card {
+        cursor: pointer;
+      }
+      .step-card-active {
+        border: 1.5px solid #0E80F0 !important;
+        box-shadow:
+          0 24px 56px -28px rgba(14, 128, 240, 0.3),
+          0 0 0 5px rgba(14, 128, 240, 0.04);
+      }
+      .step-card-active .step-label,
+      .step-card-active .step-index {
+        color: #0E80F0 !important;
+        font-weight: 600;
+      }
+      .step-card-active .step-icon {
+        background: #E6F2FE !important;
+        border: 1px solid #BFDDFB !important;
+      }
+      .step-card-active .step-icon i,
+      .step-card-active .step-icon svg {
+        color: #0E80F0 !important;
+      }
+
+      .btn-primary {
+        background: #0E80F0;
+        color: #ffffff;
+        transition: all 0.15s ease;
+        border: 1px solid #0E80F0;
+      }
+      .btn-primary:hover {
+        background: #0066D6;
+        border-color: #0066D6;
+      }
+      .btn-ghost {
+        background: transparent;
+        color: #2D3748;
+        border: 1px solid #d1d5db;
+        transition: all 0.15s ease;
+      }
+      .btn-ghost:hover {
+        border-color: #0E80F0;
+        color: #0E80F0;
+      }
+      .btn-soft {
+        background: #ffffff;
+        color: #2D3748;
+        border: 1px solid #e5e7eb;
+        transition: all 0.15s ease;
+      }
+      .btn-soft:hover {
+        border-color: #0E80F0;
+        color: #0E80F0;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        padding: 5px 11px;
+        border-radius: 999px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        color: #5A6478;
+      }
+      .pill-dark {
+        background: #2d3142;
+        color: #ffffff;
+        border-color: #2d3142;
+      }
+      .pill-brand {
+        background: #E6F2FE;
+        color: #0066D6;
+        border-color: #BFDDFB;
+      }
+      .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: #0E80F0;
+      }
+
+      details[open] summary .chev {
+        transform: rotate(45deg);
+      }
+      summary::-webkit-details-marker {
+        display: none;
+      }
+
+      /* === 场景卡片 banner & body === */
+      .role-banner {
+        position: relative;
+        height: 132px;
+        background: linear-gradient(135deg, #f4f7fc 0%, #ffffff 100%);
+        overflow: hidden;
+      }
+      .role-banner::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(14, 128, 240, 0.045) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(14, 128, 240, 0.045) 1px, transparent 1px);
+        background-size: 22px 22px;
+        -webkit-mask-image: linear-gradient(180deg, #000 0%, transparent 100%);
+        mask-image: linear-gradient(180deg, #000 0%, transparent 100%);
+      }
+      .role-banner .ribbon {
+        position: absolute;
+        left: 22px;
+        top: 18px;
+        font-size: 11.5px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        color: #0066d6;
+      }
+      .role-banner .badge-dots {
+        position: absolute;
+        left: 22px;
+        bottom: 18px;
+        display: inline-flex;
+        gap: 4px;
+        align-items: center;
+      }
+      .role-banner .badge-dots .d {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: #0e80f0;
+      }
+      .role-banner .badge-dots .d:nth-child(2) { opacity: 0.6; }
+      .role-banner .badge-dots .d:nth-child(3) { opacity: 0.3; }
+      .role-banner .scene {
+        position: absolute;
+        right: 22px;
+        bottom: 16px;
+        width: 224px;
+        height: 100px;
+      }
+      .role-banner .scene svg {
+        width: 100%;
+        height: 100%;
+      }
+
+      .role-body {
+        padding: 18px 22px 22px;
+      }
+      .role-head {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+        padding-bottom: 14px;
+        border-bottom: 1px solid #eceef2;
+      }
+      .role-head .avatar {
+        width: 38px;
+        height: 38px;
+        border-radius: 999px;
+        background: #f1f2f4;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+      .role-head .name {
+        font-size: 15px;
+        font-weight: 600;
+        line-height: 1.25;
+      }
+      .role-head .sub {
+        font-size: 12px;
+        color: #8B95A8;
+        margin-top: 2px;
+      }
+      .col-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+      .col-grid .item {
+        background: #fafbfc;
+        border: 1px solid #eceef2;
+        border-radius: 12px;
+        padding: 10px 12px;
+      }
+      .col-grid .item-title {
+        font-size: 13px;
+        font-weight: 600;
+        color: #2D3748;
+        line-height: 1.3;
+        margin-bottom: 6px;
+      }
+      .col-grid .item-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .col-grid .pill-mini {
+        font-size: 10.5px;
+        color: #0066d6;
+        padding: 1px 7px;
+        background: #e6f2fe;
+        border-radius: 5px;
+      }
+
+      /* Download dropdown */
+      .dl-dropdown {
+        position: relative;
+      }
+      .dl-dropdown.open {
+        z-index: 9999;
+      }
+      .dl-menu {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(4px);
+        transition:
+          opacity 0.2s ease,
+          transform 0.2s ease;
+        z-index: 9999;
+        box-shadow:
+          0 0 0 1px rgba(31, 35, 48, 0.06),
+          0 24px 50px -16px rgba(31, 35, 48, 0.3),
+          0 12px 24px -12px rgba(31, 35, 48, 0.18);
+      }
+      .dl-dropdown.open > .dl-menu {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+      }
+      .dl-dropdown.open > button > .dl-chev {
+        transform: rotate(180deg);
+      }
+      /* tiny arrow pointing to the button */
+      .dl-menu::before {
+        content: "";
+        position: absolute;
+        top: -6px;
+        left: 50%;
+        transform: translateX(-50%) rotate(45deg);
+        width: 12px;
+        height: 12px;
+        background: #ffffff;
+        border-left: 1px solid #e5e7eb;
+        border-top: 1px solid #e5e7eb;
+        border-top-left-radius: 3px;
+      }
+      /* nav dropdown points to right edge instead of center */
+      header .dl-menu::before {
+        left: auto;
+        right: 24px;
+        transform: rotate(45deg);
+      }
+
+      .mock-window {
+        background: #ffffff;
+        border-radius: 18px;
+        box-shadow:
+          0 1px 0 rgba(255, 255, 255, 0.6) inset,
+          0 30px 60px -30px rgba(31, 35, 48, 0.14),
+          0 8px 20px -12px rgba(31, 35, 48, 0.06);
+        border: 1px solid #e5e7eb;
+        overflow: hidden;
+      }
+      .mock-surface {
+        background: #f1f2f4;
+        border-radius: 12px;
+      }
+      .mock-card {
+        background: #ffffff;
+        border-radius: 10px;
+        border: 1px solid #e5e7eb;
+      }
+
+      .section-frame {
+        border-radius: 32px;
+      }
+
+      .blob {
+        position: absolute;
+        width: 520px;
+        height: 520px;
+        border-radius: 999px;
+        filter: blur(120px);
+        opacity: 0.55;
+        pointer-events: none;
+      }
+      .blob-drift-a {
+        animation: drift-a 18s ease-in-out infinite;
+      }
+      .blob-drift-b {
+        animation: drift-b 22s ease-in-out infinite;
+      }
+      @keyframes drift-a {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(40px, -30px);
+        }
+      }
+      @keyframes drift-b {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        50% {
+          transform: translate(-30px, 40px);
+        }
+      }
+
+      .lnk {
+        position: relative;
+      }
+      .lnk::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -3px;
+        height: 1px;
+        background: currentColor;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease;
+      }
+      .lnk:hover::after {
+        transform: scaleX(1);
+      }
+
+      .stat {
+        font-weight: 500;
+        letter-spacing: -0.04em;
+        line-height: 0.95;
+      }
+      .kbd {
+        font-family: ui-monospace, "SF Mono", monospace;
+        font-size: 11px;
+        letter-spacing: 0;
+      }
+      section[id] {
+        scroll-margin-top: 80px;
+      }
+
+      .arrow-hover:hover .arrow-icon {
+        transform: translateX(4px);
+      }
+      .arrow-icon {
+        transition: transform 0.25s ease;
+      }
+
+      /* Hero auto-demo state classes */
+      .hero-step {
+        opacity: 0;
+        transform: translateY(6px);
+        transition:
+          opacity 0.5s ease,
+          transform 0.5s ease;
+      }
+      .hero-step.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .caret {
+        display: inline-block;
+        width: 1px;
+        background: #2D3748;
+        height: 0.95em;
+        vertical-align: text-bottom;
+        animation: blink 1s steps(2, start) infinite;
+        margin-left: 1px;
+      }
+      @keyframes blink {
+        to {
+          opacity: 0;
+        }
+      }
+      .bar {
+        transform: scaleY(0);
+        transform-origin: bottom;
+        transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .bars-on .bar {
+        transform: scaleY(1);
+      }
+      .bar:nth-child(1) {
+        transition-delay: 0.05s;
+      }
+      .bar:nth-child(2) {
+        transition-delay: 0.12s;
+      }
+      .bar:nth-child(3) {
+        transition-delay: 0.19s;
+      }
+      .bar:nth-child(4) {
+        transition-delay: 0.26s;
+      }
+      .bar:nth-child(5) {
+        transition-delay: 0.33s;
+      }
+      .bar:nth-child(6) {
+        transition-delay: 0.4s;
+      }
+      .bar:nth-child(7) {
+        transition-delay: 0.47s;
+      }
+
+      /* Real Leaflet map styling */
+      .leaflet-container {
+        background: #f1f2f4 !important;
+        font-family: inherit !important;
+      }
+      .leaflet-control-attribution {
+        display: none !important;
+      }
+      .leaflet-tooltip.poi-tip {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 12px;
+        box-shadow: 0 14px 32px -10px rgba(31, 35, 48, 0.2);
+        padding: 10px 14px;
+        color: #2D3748;
+        font-family: inherit;
+        pointer-events: none;
+      }
+      .leaflet-tooltip.poi-tip::before {
+        display: none;
+      }
+      .poi-tip-name {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: -0.005em;
+      }
+      .poi-tip-info {
+        font-size: 11.5px;
+        color: #5A6478;
+        margin-top: 3px;
+      }
+
+      .poi-marker {
+        background: transparent !important;
+        border: none !important;
+      }
+      .poi-dot {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        border: 2px solid #ffffff;
+        box-shadow:
+          0 2px 8px rgba(31, 35, 48, 0.22),
+          0 0 0 1px rgba(31, 35, 48, 0.06);
+        transition:
+          transform 0.2s ease,
+          box-shadow 0.2s ease;
+      }
+      .poi-marker:hover .poi-dot {
+        transform: scale(1.45);
+        box-shadow:
+          0 4px 14px rgba(14, 128, 240, 0.35),
+          0 0 0 1px rgba(14, 128, 240, 0.25);
+      }
+
+      .poi-pulse-wrap {
+        position: relative;
+        width: 14px;
+        height: 14px;
+      }
+      .poi-pulse-core {
+        position: absolute;
+        left: 1px;
+        top: 1px;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: #0066D6;
+        border: 2px solid #ffffff;
+        box-shadow: 0 2px 8px rgba(31, 35, 48, 0.25);
+        z-index: 2;
+      }
+      .poi-pulse-ring {
+        position: absolute;
+        inset: 0;
+        border-radius: 50%;
+        background: rgba(30, 84, 224, 0.4);
+        z-index: 1;
+        animation: pulse-ring 1.8s ease-out infinite;
+      }
+      @keyframes pulse-ring {
+        0% {
+          transform: scale(0.5);
+          opacity: 0.85;
+        }
+        100% {
+          transform: scale(2.6);
+          opacity: 0;
+        }
+      }
+
+      /* District label (商圈中心标签) */
+      .district-label {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(14, 128, 240, 0.28);
+        border-radius: 10px;
+        padding: 5px 12px;
+        white-space: nowrap;
+        pointer-events: none;
+        text-align: center;
+        box-shadow: 0 6px 18px -6px rgba(31, 35, 48, 0.18);
+      }
+      .district-label b {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #2D3748;
+        line-height: 1.3;
+      }
+      .district-label span {
+        font-size: 10.5px;
+        color: #5A6478;
+      }
+
+      /* District comparison tooltip */
+      .leaflet-tooltip.district-tip {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 14px;
+        box-shadow: 0 18px 40px -12px rgba(31, 35, 48, 0.22);
+        padding: 12px 14px;
+        color: #2D3748;
+        font-family: inherit;
+        pointer-events: none;
+        min-width: 200px;
+      }
+      .leaflet-tooltip.district-tip::before {
+        display: none;
+      }
+      .district-tip-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      .district-tip-name {
+        font-size: 14px;
+        font-weight: 600;
+        color: #2D3748;
+      }
+      .district-tip-flow {
+        font-size: 10.5px;
+        padding: 2px 8px;
+        border-radius: 999px;
+        background: #E6F2FE;
+        color: #0066D6;
+        font-weight: 500;
+      }
+      .district-tip-stats {
+        display: flex;
+        gap: 14px;
+        font-size: 11.5px;
+        color: #5A6478;
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 1px solid #eceef2;
+      }
+      .district-tip-stats b {
+        color: #2D3748;
+        font-weight: 600;
+        font-size: 13px;
+      }
+      .district-tip-insight {
+        font-size: 11.5px;
+        color: #5A6478;
+        line-height: 1.55;
+      }
+
+      @keyframes dot-soft {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.45;
+        }
+      }
+      .pulse {
+        animation: dot-soft 2s ease-in-out infinite;
+      }
+
+      /* Toggle switch */
+      .toggle {
+        width: 36px;
+        height: 20px;
+        border-radius: 999px;
+        background: #e5e7eb;
+        position: relative;
+        flex-shrink: 0;
+        transition: background 0.25s ease;
+      }
+      .toggle::after {
+        content: "";
+        position: absolute;
+        left: 2px;
+        top: 2px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #ffffff;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.2);
+        transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .toggle.on {
+        background: #0E80F0;
+      }
+      .toggle.on::after {
+        transform: translateX(16px);
+      }
+
+      /* Spin */
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      .spin {
+        animation: spin 1.4s linear infinite;
+      }
+
+      /* Sticky for workspace mock */
+      .sticky-mock {
+        position: sticky;
+        top: 96px;
+      }
+
+      /* GSAP fallback initial state */
+      [data-fade] {
+        opacity: 0;
+        transform: translateY(28px);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ======================= NAV ======================= -->
+    <header class="fixed top-0 inset-x-0 z-50 bg-paper/85 backdrop-blur-md border-b border-line">
+      <div class="max-w-[1280px] mx-auto px-6 py-2.5 flex items-center justify-between">
+        <a href="./index.html" class="flex items-center gap-2 pl-3">
+          <img src="./static/logo/logo-icon.png" alt="" class="h-7 w-auto">
+  <span class="font-bold tracking-[-0.03em] text-[17px] leading-none translate-y-px"><span class="text-ink">Data</span><span class="text-brand">Mind</span></span>
+</a>
+        <nav class="hidden md:flex items-center gap-6 text-[14px] text-sub">
+          <a href="#geo" class="lnk hover:text-ink transition">商业地理数据</a>
+          <a href="#scenarios" class="lnk hover:text-ink transition">场景</a>
+          <a href="#workspace" class="lnk hover:text-ink transition">产品</a>
+          <a href="./pricing.html" class="lnk hover:text-ink transition">定价</a>
+          <a href="./about.html" class="lnk hover:text-ink transition">关于我们</a>
+        <a href="./contact.html" class="lnk hover:text-ink transition">联系我们</a>
+          <a href="#faq" class="lnk hover:text-ink transition">常见问题</a>
+        </nav>
+        <div class="flex items-center gap-2 pr-1">
+          <div class="relative dl-dropdown">
+            <button type="button" class="btn-primary text-[13px] font-medium pl-4 pr-3 py-2 rounded-full inline-flex items-center gap-1.5">
+              免费下载
+              <svg class="dl-chev w-3 h-3 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </button>
+            <div class="dl-menu absolute right-0 top-full mt-2 w-60 bg-white border border-line rounded-2xl shadow-xl shadow-ink/10 p-2">
+              <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface group transition">
+                <svg viewBox="0 0 384 512" fill="currentColor" class="w-4 h-4 text-ink">
+                  <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" />
+                </svg>
+                <div class="flex-1 text-left"><div class="text-[13.5px] font-semibold text-ink">macOS</div></div>
+                <i data-lucide="download" class="w-3.5 h-3.5 text-mute group-hover:text-brand transition"></i>
+              </a>
+              <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface group transition">
+                <i data-lucide="monitor" class="w-4 h-4 text-ink"></i>
+                <div class="flex-1 text-left"><div class="text-[13.5px] font-semibold text-ink">Windows</div></div>
+                <i data-lucide="download" class="w-3.5 h-3.5 text-mute group-hover:text-brand transition"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ======================= HERO ======================= -->
+    <section class="relative pt-28 pb-16 overflow-hidden">
+      <div
+        class="blob blob-drift-a"
+        style="background: #BFDDFB; top: -100px; right: -120px; opacity: 0.45"
+      ></div>
+      <div
+        class="blob blob-drift-b"
+        style="background: #e6e8ec; top: 200px; left: -200px; opacity: 0.7"
+      ></div>
+
+      <div class="relative max-w-[1280px] mx-auto px-6">
+        <div class="text-center max-w-4xl mx-auto">
+          <div class="inline-flex items-center gap-2 pill mb-7" data-fade>
+            <span class="dot"></span>
+            <span>内置 1 亿+ 商业 POI 数据</span>
+          </div>
+          <h1
+            class="display text-[56px] md:text-[88px] leading-[1.02] text-ink"
+            data-fade
+          >
+            像分析师一样工作的<br />
+            <span class="text-ink">AI 数据助手</span>
+          </h1>
+          <p
+            class="mt-7 text-[18px] text-sub max-w-2xl mx-auto leading-[1.65]"
+            data-fade
+          >
+            千万级商业地理数据内置，本地文件一键直读。<br
+              class="hidden md:block"
+            />
+            提问，AI 自动出图、写报告，从分析到归档全程在你的电脑上完成。
+          </p>
+          <div
+            class="mt-9 flex flex-wrap items-center justify-center gap-3"
+            data-fade
+          >
+            <a
+              href="#"
+              class="btn-primary text-[14px] font-medium px-6 py-3 rounded-full inline-flex items-center gap-2"
+            >
+              <svg viewBox="0 0 384 512" fill="currentColor" class="w-4 h-4">
+                <path
+                  d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"
+                />
+              </svg>
+              macOS 下载
+            </a>
+            <a
+              href="#"
+              class="btn-primary text-[14px] font-medium px-6 py-3 rounded-full inline-flex items-center gap-2"
+            >
+              <i data-lucide="monitor" class="w-4 h-4"></i>
+              Windows 下载
+            </a>
+          </div>
+          <div
+            class="mt-4 text-[12.5px] text-sub flex items-center justify-center gap-1.5"
+            data-fade
+          >
+            <i data-lucide="gift" class="w-3.5 h-3.5 text-brand"></i>
+            <span>下载即免费试用 · 含赠送对话额度与商业地理数据库次数</span>
+          </div>
+          <div
+            class="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-[12.5px] text-mute"
+            data-fade
+          >
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="map-pin" class="w-3.5 h-3.5 text-brand"></i>
+              商业地理分析
+            </div>
+            <div class="w-1 h-1 rounded-full bg-line2"></div>
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="wand-sparkles" class="w-3.5 h-3.5 text-brand"></i>
+              数据清洗
+            </div>
+            <div class="w-1 h-1 rounded-full bg-line2"></div>
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="filter" class="w-3.5 h-3.5 text-brand"></i>
+              数据处理
+            </div>
+            <div class="w-1 h-1 rounded-full bg-line2"></div>
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="trending-up" class="w-3.5 h-3.5 text-brand"></i>
+              数据分析
+            </div>
+            <div class="w-1 h-1 rounded-full bg-line2"></div>
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="bar-chart-3" class="w-3.5 h-3.5 text-brand"></i>
+              智能可视化
+            </div>
+            <div class="w-1 h-1 rounded-full bg-line2"></div>
+            <div class="flex items-center gap-1.5">
+              <i data-lucide="clock" class="w-3.5 h-3.5 text-brand"></i>
+              定时任务
+            </div>
+          </div>
+        </div>
+
+        <!-- Hero auto-demo mock -->
+        <div class="mt-16 max-w-5xl mx-auto" data-fade>
+          <div class="mock-window">
+            <div
+              class="flex items-center gap-1.5 px-4 py-3 border-b border-line"
+            >
+              <span class="w-2.5 h-2.5 rounded-full bg-[#FF8B7A]"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-[#FFCC66]"></span>
+              <span class="w-2.5 h-2.5 rounded-full bg-[#7DD06B]"></span>
+              <span class="ml-3 text-[12px] text-mute">DataMind</span>
+              <span
+                id="phase-label"
+                class="ml-auto text-[11px] text-brand font-medium"
+                >提问中…</span
+              >
+            </div>
+            <div class="grid grid-cols-12 gap-3 p-4 h-[460px]">
+              <!-- Sidebar -->
+              <div class="col-span-3 mock-surface p-3.5">
+                <div class="text-[11px] text-mute mb-3 font-medium">会话</div>
+                <div class="space-y-1">
+                  <div
+                    class="text-[12px] px-2.5 py-2 rounded-lg bg-ink text-paper font-medium"
+                  >
+                    广州天河商圈选址
+                  </div>
+                  <div class="text-[12px] px-2.5 py-2 rounded-lg text-sub">
+                    连锁咖啡品牌门店分析
+                  </div>
+                  <div class="text-[12px] px-2.5 py-2 rounded-lg text-sub">
+                    Q1 销售周报
+                  </div>
+                  <div class="text-[12px] px-2.5 py-2 rounded-lg text-sub">
+                    客流密度热力图
+                  </div>
+                </div>
+              </div>
+              <!-- Chat -->
+              <div class="col-span-6 flex flex-col">
+                <div class="flex-1 space-y-3">
+                  <div
+                    class="bg-surface rounded-2xl rounded-tl-md p-3 text-[13px] text-ink max-w-[90%] min-h-[44px]"
+                  >
+                    <span id="hero-typing"></span
+                    ><span id="hero-caret" class="caret"></span>
+                  </div>
+                  <div
+                    id="step-tools"
+                    class="hero-step text-[11.5px] text-mute leading-relaxed"
+                  >
+                    已查询商业地理数据库：
+                    <span class="text-brand">天河区 POI</span> ·
+                    <span class="text-brand">连锁品牌门店</span> ·
+                    <span class="text-brand">客流密度</span>
+                  </div>
+                  <div id="step-chart" class="hero-step card p-3.5">
+                    <div
+                      class="text-[11.5px] text-sub mb-2 flex items-center gap-1.5"
+                    >
+                      <i data-lucide="bar-chart-3" class="w-3.5 h-3.5"></i>
+                      已生成图表
+                    </div>
+                    <div
+                      id="chart-bars"
+                      class="h-24 rounded-lg relative overflow-hidden"
+                    >
+                      <div
+                        class="absolute inset-0 flex items-end gap-1.5 px-2 pb-1"
+                      >
+                        <div
+                          class="bar flex-1 bg-[#CBD5E1] rounded-t-md"
+                          style="height: 30%"
+                        ></div>
+                        <div
+                          class="bar flex-1 bg-[#CBD5E1] rounded-t-md"
+                          style="height: 55%"
+                        ></div>
+                        <div
+                          class="bar flex-1 bg-brand rounded-t-md"
+                          style="height: 78%"
+                        ></div>
+                        <div
+                          class="bar flex-1 bg-[#CBD5E1] rounded-t-md"
+                          style="height: 42%"
+                        ></div>
+                        <div
+                          class="bar flex-1 bg-brand rounded-t-md"
+                          style="height: 88%"
+                        ></div>
+                        <div
+                          class="bar flex-1 bg-[#CBD5E1] rounded-t-md"
+                          style="height: 62%"
+                        ></div>
+                        <div
+                          class="bar flex-1 bg-[#CBD5E1] rounded-t-md"
+                          style="height: 50%"
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="mt-3 bg-surface rounded-2xl px-3 py-2.5 flex items-center gap-2 text-[12px] text-mute"
+                >
+                  <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                  <i data-lucide="database" class="w-3.5 h-3.5"></i>
+                  <i data-lucide="wrench" class="w-3.5 h-3.5"></i>
+                  <span class="flex-1">追问或添加任务…</span>
+                  <div
+                    class="bg-ink rounded-full w-6 h-6 flex items-center justify-center"
+                  >
+                    <i data-lucide="arrow-up" class="w-3 h-3 text-paper"></i>
+                  </div>
+                </div>
+              </div>
+              <!-- Right: Artifacts -->
+              <div class="col-span-3 mock-surface p-3.5">
+                <div class="text-[11px] text-mute mb-3 font-medium">
+                  成果归档
+                </div>
+                <div class="space-y-2">
+                  <div id="art-map" class="hero-step mock-card p-2">
+                    <div
+                      class="text-[10.5px] text-mute mb-1.5 flex items-center gap-1"
+                    >
+                      <i data-lucide="map" class="w-3 h-3"></i> 地图
+                    </div>
+                    <div
+                      class="h-12 rounded-md bg-gradient-to-br from-brand/30 to-brand/5 relative overflow-hidden"
+                    >
+                      <span
+                        class="absolute top-2 left-3 w-1.5 h-1.5 rounded-full bg-brand"
+                      ></span>
+                      <span
+                        class="absolute top-5 left-7 w-1 h-1 rounded-full bg-brand/70"
+                      ></span>
+                      <span
+                        class="absolute top-3 right-4 w-1.5 h-1.5 rounded-full bg-brand"
+                      ></span>
+                      <span
+                        class="absolute bottom-2 left-5 w-1 h-1 rounded-full bg-brand/70"
+                      ></span>
+                    </div>
+                  </div>
+                  <div id="art-report" class="hero-step mock-card p-2">
+                    <div
+                      class="text-[10.5px] text-mute mb-1.5 flex items-center gap-1"
+                    >
+                      <i data-lucide="file-text" class="w-3 h-3"></i> 报告
+                    </div>
+                    <div class="space-y-1">
+                      <div class="h-1 bg-line rounded-full"></div>
+                      <div class="h-1 bg-line rounded-full w-4/5"></div>
+                      <div class="h-1 bg-line rounded-full w-3/5"></div>
+                    </div>
+                  </div>
+                  <div id="art-code" class="hero-step mock-card p-2">
+                    <div
+                      class="text-[10.5px] text-mute mb-1.5 flex items-center gap-1"
+                    >
+                      <i data-lucide="code-2" class="w-3 h-3"></i> 代码
+                    </div>
+                    <div class="space-y-1">
+                      <div class="h-1 bg-brand/40 rounded-full w-3/5"></div>
+                      <div class="h-1 bg-line rounded-full w-4/5"></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= GEO DATABASE ======================= -->
+    <section id="geo" class="relative pt-12 pb-12">
+      <div class="max-w-[1280px] mx-auto px-6">
+        <div class="card-deep section-frame p-8 md:p-14">
+          <div class="text-center max-w-3xl mx-auto mb-12" data-fade>
+            <span class="pill pill-dark mb-5">DataMind 独家</span>
+            <h2
+              class="display text-[40px] md:text-[56px] leading-[1.05] mt-5 text-ink"
+            >
+              商业地理数据库
+            </h2>
+            <p class="mt-5 text-sub text-[17px] leading-[1.65]">
+              由 DataMind 商业地理团队精选汇编。AI 分析时直接调用，开箱即用。
+            </p>
+          </div>
+
+          <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-3" data-stagger>
+            <div class="card-paper p-7">
+              <div
+                class="w-11 h-11 rounded-full bg-surface flex items-center justify-center mb-5"
+              >
+                <i data-lucide="map-pin" class="w-5 h-5 text-ink"></i>
+              </div>
+              <div class="stat text-[44px] md:text-[52px] text-ink">
+                1<span class="text-[24px] text-sub align-top ml-1">亿+</span>
+              </div>
+              <div class="text-[12.5px] text-mute mt-1 tracking-wide">
+                商业 POI
+              </div>
+              <div class="mt-5 pt-5 border-t border-line">
+                <div class="text-[15px] font-semibold text-ink mb-1.5">
+                  商业地点
+                </div>
+                <div class="text-[13.5px] text-sub leading-[1.65]">
+                  餐饮、零售、服务等 19 类全品类，覆盖全国主要商业网点。
+                </div>
+              </div>
+            </div>
+            <div class="card-paper p-7">
+              <div
+                class="w-11 h-11 rounded-full bg-surface flex items-center justify-center mb-5"
+              >
+                <i data-lucide="layers" class="w-5 h-5 text-ink"></i>
+              </div>
+              <div class="stat text-[44px] md:text-[52px] text-ink">
+                <span data-count="500">0</span
+                ><span class="text-[24px] text-sub align-top ml-1">万+</span>
+              </div>
+              <div class="text-[12.5px] text-mute mt-1 tracking-wide">
+                区域 AOI
+              </div>
+              <div class="mt-5 pt-5 border-t border-line">
+                <div class="text-[15px] font-semibold text-ink mb-1.5">
+                  区域空间
+                </div>
+                <div class="text-[13.5px] text-sub leading-[1.65]">
+                  住宅、写字楼、商区边界与属性，支持空间画像与圈选分析。
+                </div>
+              </div>
+            </div>
+            <div class="card-paper p-7">
+              <div
+                class="w-11 h-11 rounded-full bg-surface flex items-center justify-center mb-5"
+              >
+                <i data-lucide="building-2" class="w-5 h-5 text-ink"></i>
+              </div>
+              <div class="stat text-[44px] md:text-[52px] text-ink">
+                <span data-count="8000">0</span
+                ><span class="text-[24px] text-sub align-top ml-1">+</span>
+              </div>
+              <div class="text-[12.5px] text-mute mt-1 tracking-wide">
+                连锁品牌
+              </div>
+              <div class="mt-5 pt-5 border-t border-line">
+                <div class="text-[15px] font-semibold text-ink mb-1.5">
+                  品牌数据
+                </div>
+                <div class="text-[13.5px] text-sub leading-[1.65]">
+                  连锁品牌资产、门店网络分布与覆盖度，看懂竞争格局。
+                </div>
+              </div>
+            </div>
+            <div class="card-paper p-7">
+              <div
+                class="w-11 h-11 rounded-full bg-surface flex items-center justify-center mb-5"
+              >
+                <i data-lucide="users" class="w-5 h-5 text-ink"></i>
+              </div>
+              <div class="stat text-[44px] md:text-[52px] text-ink">全维度</div>
+              <div class="text-[12.5px] text-mute mt-1 tracking-wide">
+                客流 · 画像
+              </div>
+              <div class="mt-5 pt-5 border-t border-line">
+                <div class="text-[15px] font-semibold text-ink mb-1.5">
+                  人群消费
+                </div>
+                <div class="text-[13.5px] text-sub leading-[1.65]">
+                  客流密度、客群画像、消费行为，业务决策有依据。
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Scenario-framed real map -->
+          <div class="mt-10 card-paper p-6 md:p-10" data-fade>
+            <div class="mb-7 max-w-3xl">
+              <span class="pill pill-brand mb-4">场景示例 · 商圈洞察</span>
+              <h3
+                class="display text-[24px] md:text-[32px] leading-[1.15] mt-4"
+              >
+                "对比天河区五大商圈的<br
+                  class="hidden md:block"
+                />品牌活跃度与客群特征"
+              </h3>
+              <p class="mt-4 text-[14px] text-sub leading-[1.75]">
+                这是 DataMind 的真实工作流：你向它提一个业务问题，AI
+                自动调用商业地理数据库的<span class="text-ink font-medium"
+                  >品牌门店分布</span
+                >、<span class="text-ink font-medium">商业地点密度</span>与<span
+                  class="text-ink font-medium"
+                  >人群消费画像</span
+                >，几秒内给你一张可交互的洞察地图。
+              </p>
+            </div>
+            <div class="mb-4 flex flex-wrap items-center gap-2">
+              <span
+                class="text-[11px] uppercase tracking-wider font-medium text-mute mr-1"
+                >AI 已调用</span
+              >
+              <span class="pill"
+                ><i data-lucide="map-pin" class="w-3 h-3 text-brand"></i
+                >商业地点</span
+              >
+              <span class="pill"
+                ><i data-lucide="building-2" class="w-3 h-3 text-brand"></i
+                >品牌数据</span
+              >
+              <span class="pill"
+                ><i data-lucide="users" class="w-3 h-3 text-brand"></i
+                >人群消费</span
+              >
+            </div>
+            <div
+              id="real-map-container"
+              class="relative rounded-xl overflow-hidden border border-line"
+              style="height: 460px"
+            >
+              <div id="real-map" class="absolute inset-0"></div>
+              <div
+                class="absolute bottom-3 right-3 z-[400] flex items-center gap-2 text-[11px] text-sub bg-white/90 backdrop-blur rounded-full px-3 py-2 border border-line shadow-sm"
+              >
+                <span
+                  class="w-3 h-3 rounded-full bg-brand/15 border border-brand/40"
+                ></span>
+                <span>商圈活跃范围 · 圆形大小 = 商业活跃度</span>
+              </div>
+            </div>
+            <p class="mt-3 text-[11.5px] text-mute text-center">
+              © CARTO · OpenStreetMap contributors
+            </p>
+          </div>
+
+          <div
+            class="mt-10 flex flex-wrap items-center justify-center gap-2"
+            data-fade
+          >
+            <span class="text-[13px] text-sub mr-2">适合</span>
+            <span class="pill">选址分析</span>
+            <span class="pill">商圈洞察</span>
+            <span class="pill">竞品门店追踪</span>
+            <span class="pill">市场研究</span>
+            <span class="pill">区域人口画像</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= 4 STEP FLOW ======================= -->
+    <section class="py-20">
+      <div class="max-w-[1280px] mx-auto px-6">
+        <div class="text-center w-full mb-14" data-fade>
+          <h2
+            class="display w-full text-center text-[40px] md:text-[56px] leading-[1.05] text-ink"
+          >
+            从提问到能交付的报告，4 步搞定
+          </h2>
+          <p class="mt-5 text-sub text-[17px]">不用切多个工具，不用懂代码。</p>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-3" data-stagger>
+          <div class="card p-7 step-card">
+            <div class="flex items-center justify-between mb-7">
+              <div class="text-[13px] text-mute font-medium step-label">
+                步骤
+              </div>
+              <div class="text-[44px] stat text-ink step-index">01</div>
+            </div>
+            <div
+              class="w-11 h-11 rounded-full bg-paper border border-line flex items-center justify-center mb-4 step-icon"
+            >
+              <i data-lucide="upload" class="w-4.5 h-4.5 text-ink"></i>
+            </div>
+            <h3 class="text-[16px] font-semibold mb-2">上传 / 读取数据</h3>
+            <p class="text-[13.5px] text-sub leading-[1.7]">
+              上传 / 读取本地文件，或使用商业地理数据库。
+            </p>
+          </div>
+          <div class="card p-7 step-card">
+            <div class="flex items-center justify-between mb-7">
+              <div class="text-[13px] text-mute font-medium step-label">
+                步骤
+              </div>
+              <div class="text-[44px] stat text-ink step-index">02</div>
+            </div>
+            <div
+              class="w-11 h-11 rounded-full bg-paper border border-line flex items-center justify-center mb-4 step-icon"
+            >
+              <i data-lucide="message-square" class="w-4.5 h-4.5 text-ink"></i>
+            </div>
+            <h3 class="text-[16px] font-semibold mb-2">用自然语言提问</h3>
+            <p class="text-[13.5px] text-sub leading-[1.7]">
+              业务语言描述目标，AI 拆解并自动规划任务。
+            </p>
+          </div>
+          <div class="card p-7 step-card step-card-active">
+            <div class="flex items-center justify-between mb-7">
+              <div class="text-[13px] text-mute font-medium step-label">
+                核心步骤
+              </div>
+              <div class="text-[44px] stat text-ink step-index">03</div>
+            </div>
+            <div
+              class="w-11 h-11 rounded-full bg-paper border border-line flex items-center justify-center mb-4 step-icon"
+            >
+              <i data-lucide="sparkles" class="w-4.5 h-4.5 text-ink"></i>
+            </div>
+            <h3 class="text-[16px] font-semibold mb-2">
+              AI 出图、出表、出报告
+            </h3>
+            <p class="text-[13.5px] text-sub leading-[1.7]">
+              报告、仪表板、地图、表格 4 种产物，一键生成。
+            </p>
+          </div>
+          <div class="card p-7 step-card">
+            <div class="flex items-center justify-between mb-7">
+              <div class="text-[13px] text-mute font-medium step-label">
+                步骤
+              </div>
+              <div class="text-[44px] stat text-ink step-index">04</div>
+            </div>
+            <div
+              class="w-11 h-11 rounded-full bg-paper border border-line flex items-center justify-center mb-4 step-icon"
+            >
+              <i data-lucide="archive" class="w-4.5 h-4.5 text-ink"></i>
+            </div>
+            <h3 class="text-[16px] font-semibold mb-2">产物归档可复用</h3>
+            <p class="text-[13.5px] text-sub leading-[1.7]">
+              每次生成的代码、图表、报告都沉淀到会话，随时回看与再用。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= WORKSPACE — sticky right column ======================= -->
+    <section id="workspace" class="py-12">
+      <div class="max-w-[1280px] mx-auto px-6">
+        <div class="card-deep section-frame p-8 md:p-14">
+          <div class="grid lg:grid-cols-2 gap-12 items-start">
+            <div class="lg:py-8" data-fade>
+              <span class="pill mb-5">一体化工作台</span>
+              <h2
+                class="display text-[40px] md:text-[56px] leading-[1.05] mt-5 text-ink"
+              >
+                数据、对话、产物，<br />同屏协同
+              </h2>
+              <p class="mt-6 text-sub text-[17px] leading-[1.65]">
+                不用切窗口、不用记路径。左侧管会话，中间和 AI
+                对话，右侧实时看到数据源和成果归档。
+              </p>
+              <ul class="mt-10 space-y-3" data-stagger>
+                <li class="card-paper p-5 flex gap-4">
+                  <div
+                    class="w-10 h-10 rounded-full bg-surface flex items-center justify-center shrink-0"
+                  >
+                    <i
+                      data-lucide="folder-open"
+                      class="w-4.5 h-4.5 text-ink"
+                    ></i>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-[15px]">数据源面板</div>
+                    <div class="text-[13.5px] text-sub mt-0.5 leading-[1.65]">
+                      本地文件、个人数据集、商业地理数据库统一管理。
+                    </div>
+                  </div>
+                </li>
+                <li class="card-paper p-5 flex gap-4">
+                  <div
+                    class="w-10 h-10 rounded-full bg-surface flex items-center justify-center shrink-0"
+                  >
+                    <i
+                      data-lucide="message-circle"
+                      class="w-4.5 h-4.5 text-ink"
+                    ></i>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-[15px]">智能对话</div>
+                    <div class="text-[13.5px] text-sub mt-0.5 leading-[1.65]">
+                      追问、纠错、衍生新任务，AI 全程跟得住上下文。
+                    </div>
+                  </div>
+                </li>
+                <li class="card-paper p-5 flex gap-4">
+                  <div
+                    class="w-10 h-10 rounded-full bg-surface flex items-center justify-center shrink-0"
+                  >
+                    <i data-lucide="package" class="w-4.5 h-4.5 text-ink"></i>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-[15px]">成果归档</div>
+                    <div class="text-[13.5px] text-sub mt-0.5 leading-[1.65]">
+                      每次产出的代码、图表、HTML、报告都沉淀，支持导出与再次引用。
+                    </div>
+                  </div>
+                </li>
+                <li class="card-paper p-5 flex gap-4">
+                  <div
+                    class="w-10 h-10 rounded-full bg-surface flex items-center justify-center shrink-0"
+                  >
+                    <i data-lucide="history" class="w-4.5 h-4.5 text-ink"></i>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-[15px]">会话可复盘</div>
+                    <div class="text-[13.5px] text-sub mt-0.5 leading-[1.65]">
+                      每条会话都是一份可回看的工作记录，便于追溯和二次复用。
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+            <div class="sticky-mock" data-fade>
+              <div class="mock-window">
+                <div
+                  class="flex items-center gap-1.5 px-4 py-3 border-b border-line"
+                >
+                  <span class="w-2.5 h-2.5 rounded-full bg-[#FF8B7A]"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-[#FFCC66]"></span>
+                  <span class="w-2.5 h-2.5 rounded-full bg-[#7DD06B]"></span>
+                </div>
+                <div class="grid grid-cols-12 gap-2 p-3 h-[480px]">
+                  <div class="col-span-3 space-y-2">
+                    <div class="mock-surface p-3">
+                      <div class="text-[10.5px] text-mute mb-2 font-medium">
+                        会话
+                      </div>
+                      <div class="space-y-1">
+                        <div
+                          class="text-[11.5px] px-2 py-1.5 rounded-md bg-ink text-paper font-medium"
+                        >
+                          天河商圈分析
+                        </div>
+                        <div
+                          class="text-[11.5px] px-2 py-1.5 rounded-md text-sub"
+                        >
+                          华南区品牌渗透
+                        </div>
+                        <div
+                          class="text-[11.5px] px-2 py-1.5 rounded-md text-sub"
+                        >
+                          门店日报自动化
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mock-surface p-3">
+                      <div class="text-[10.5px] text-mute mb-2 font-medium">
+                        导航
+                      </div>
+                      <div class="space-y-1.5 text-[11.5px] text-sub">
+                        <div class="flex items-center gap-2">
+                          <i data-lucide="database" class="w-3 h-3"></i> 数据集
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <i data-lucide="map-pin" class="w-3 h-3"></i> 商业地理
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <i data-lucide="puzzle" class="w-3 h-3"></i> 技能
+                        </div>
+                        <div class="flex items-center gap-2">
+                          <i data-lucide="clock" class="w-3 h-3"></i> 定时任务
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-span-6 flex flex-col">
+                    <div class="text-[10.5px] text-mute mb-2 font-medium">
+                      对话
+                    </div>
+                    <div class="flex-1 space-y-2 text-[11.5px]">
+                      <div
+                        class="bg-surface rounded-2xl rounded-tl-md p-2.5 text-ink max-w-[88%]"
+                      >
+                        分析天河区前 10 大商圈的咖啡密度，按客流密度排序
+                      </div>
+                      <div class="text-mute text-[10.5px] px-1">
+                        已使用：商业地点 · 区域空间 · 人群消费
+                      </div>
+                      <div class="mock-surface p-2.5 mt-1">
+                        <div class="text-[10.5px] text-mute mb-1.5 font-medium">
+                          表格 · 商圈咖啡密度 Top 10
+                        </div>
+                        <div class="space-y-1.5">
+                          <div
+                            class="grid grid-cols-3 gap-1 text-[10px] text-mute pb-1 border-b border-line"
+                          >
+                            <span>商圈</span><span>门店数</span
+                            ><span>客流</span>
+                          </div>
+                          <div
+                            class="grid grid-cols-3 gap-1 text-[10.5px] text-ink"
+                          >
+                            <span>天河城</span><span>187</span
+                            ><span class="text-brand font-semibold">高</span>
+                          </div>
+                          <div
+                            class="grid grid-cols-3 gap-1 text-[10.5px] text-ink"
+                          >
+                            <span>珠江新城</span><span>165</span
+                            ><span class="text-brand font-semibold">高</span>
+                          </div>
+                          <div
+                            class="grid grid-cols-3 gap-1 text-[10.5px] text-ink"
+                          >
+                            <span>体育中心</span><span>132</span><span>中</span>
+                          </div>
+                          <div
+                            class="grid grid-cols-3 gap-1 text-[10.5px] text-ink"
+                          >
+                            <span>石牌</span><span>108</span><span>中</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="bg-surface rounded-full px-3 py-1.5 flex items-center gap-2 text-[10.5px] text-mute mt-2"
+                    >
+                      <i data-lucide="plus" class="w-3 h-3"></i>
+                      <span class="flex-1">追问…</span>
+                      <div class="bg-ink rounded-full p-1">
+                        <i
+                          data-lucide="arrow-up"
+                          class="w-2.5 h-2.5 text-paper"
+                        ></i>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-span-3 space-y-2">
+                    <div class="mock-surface p-3">
+                      <div class="text-[10.5px] text-mute mb-2 font-medium">
+                        数据源
+                      </div>
+                      <div class="space-y-1 text-[11px] text-ink">
+                        <div class="flex items-center gap-1.5">
+                          <i
+                            data-lucide="file-spreadsheet"
+                            class="w-3 h-3 text-brand"
+                          ></i>
+                          销售明细.xlsx
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                          <i
+                            data-lucide="map-pin"
+                            class="w-3 h-3 text-brand"
+                          ></i>
+                          商业地点
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                          <i data-lucide="users" class="w-3 h-3 text-brand"></i>
+                          人群消费
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mock-surface p-3">
+                      <div class="text-[10.5px] text-mute mb-2 font-medium">
+                        快捷生成
+                      </div>
+                      <div
+                        class="grid grid-cols-2 gap-1.5 text-[10px] text-ink"
+                      >
+                        <div class="mock-card p-1.5 flex items-center gap-1">
+                          <i data-lucide="file-text" class="w-3 h-3"></i> 报告
+                        </div>
+                        <div class="mock-card p-1.5 flex items-center gap-1">
+                          <i data-lucide="layout-dashboard" class="w-3 h-3"></i>
+                          仪表板
+                        </div>
+                        <div class="mock-card p-1.5 flex items-center gap-1">
+                          <i data-lucide="map" class="w-3 h-3"></i> 地图
+                        </div>
+                        <div class="mock-card p-1.5 flex items-center gap-1">
+                          <i data-lucide="table" class="w-3 h-3"></i> 表格
+                        </div>
+                      </div>
+                    </div>
+                    <div class="mock-surface p-3">
+                      <div class="text-[10.5px] text-mute mb-2 font-medium">
+                        成果归档
+                      </div>
+                      <div class="space-y-1 text-[11px] text-sub">
+                        <div class="flex items-center gap-1.5">
+                          <i data-lucide="file-text" class="w-3 h-3"></i>
+                          商圈分析报告
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                          <i data-lucide="map" class="w-3 h-3"></i> 密度热力图
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                          <i data-lucide="code-2" class="w-3 h-3"></i> 数据脚本
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= 场景 × 受众 ======================= -->
+    <section id="scenarios" class="py-20">
+      <div class="max-w-[1280px] mx-auto px-6">
+        <div class="text-center max-w-3xl mx-auto mb-14" data-fade>
+          <h2
+            class="display text-[40px] md:text-[56px] leading-[1.05] text-ink"
+          >
+            不同岗位，<br />都能找到自己的用法
+          </h2>
+          <p class="mt-5 text-sub text-[17px]">业务场景 × 受众一图看清。</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-3" data-stagger>
+          <!-- 商业 / 选址分析师 -->
+          <div class="card overflow-hidden">
+            <div class="role-banner">
+              <span class="ribbon">商业 · 选址</span>
+              <span class="badge-dots"><span class="d"></span><span class="d"></span><span class="d"></span></span>
+              <div class="scene">
+                <svg viewBox="0 0 220 100">
+                  <rect x="6" y="14" width="208" height="76" rx="10" fill="#fff" stroke="#E5E7EB" />
+                  <g stroke="#D1D5DB" stroke-width="0.8" opacity="0.6" fill="none">
+                    <path d="M 20 30 H 200" />
+                    <path d="M 20 50 H 200" />
+                    <path d="M 20 72 H 200" />
+                    <path d="M 60 16 V 88" />
+                    <path d="M 110 16 V 88" />
+                    <path d="M 160 16 V 88" />
+                  </g>
+                  <g fill="#94A3B8">
+                    <circle cx="40" cy="40" r="2.5" />
+                    <circle cx="80" cy="62" r="2.5" />
+                    <circle cx="140" cy="34" r="2.5" />
+                    <circle cx="180" cy="74" r="2.5" />
+                  </g>
+                  <g>
+                    <circle cx="118" cy="52" r="14" fill="#E6F2FE" />
+                    <circle cx="118" cy="52" r="8" fill="#0E80F0" />
+                    <circle cx="118" cy="52" r="3" fill="#fff" />
+                    <circle cx="118" cy="52" r="22" fill="none" stroke="#0E80F0" stroke-width="0.8" opacity="0.4" />
+                  </g>
+                  <g transform="translate(150 18)">
+                    <rect width="56" height="14" rx="7" fill="#fff" stroke="#E5E7EB" />
+                    <circle cx="9" cy="7" r="2.4" fill="#0E80F0" />
+                    <text x="16" y="10" font-family="Inter,sans-serif" font-size="8" fill="#2D3748" font-weight="600">Score 92</text>
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div class="role-body">
+              <div class="role-head">
+                <div class="avatar"><i data-lucide="map-pin" class="w-[18px] h-[18px] text-ink"></i></div>
+                <div>
+                  <div class="name">商业 / 选址分析师</div>
+                  <div class="sub">市场拓展、品牌商圈</div>
+                </div>
+              </div>
+              <div class="col-grid">
+                <div class="item">
+                  <div class="item-title">新店选址评估</div>
+                  <div class="item-tags"><span class="pill-mini">商业地理</span><span class="pill-mini">地图</span></div>
+                </div>
+                <div class="item">
+                  <div class="item-title">商圈竞争洞察</div>
+                  <div class="item-tags"><span class="pill-mini">区域空间</span><span class="pill-mini">品牌数据</span></div>
+                </div>
+                <div class="item">
+                  <div class="item-title">人群画像分析</div>
+                  <div class="item-tags"><span class="pill-mini">人群消费</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 运营 / 数据分析师 -->
+          <div class="card overflow-hidden">
+            <div class="role-banner">
+              <span class="ribbon">数据 · 运营</span>
+              <span class="badge-dots"><span class="d"></span><span class="d"></span><span class="d"></span></span>
+              <div class="scene">
+                <svg viewBox="0 0 220 100">
+                  <rect x="6" y="14" width="208" height="76" rx="10" fill="#fff" stroke="#E5E7EB" />
+                  <rect x="14" y="22" width="50" height="6" rx="2" fill="#2D3748" opacity="0.85" />
+                  <rect x="14" y="32" width="36" height="4" rx="2" fill="#D1D5DB" />
+                  <g transform="translate(150,20)">
+                    <rect width="56" height="14" rx="7" fill="#E6F2FE" />
+                    <circle cx="9" cy="7" r="2.5" fill="#0E80F0" />
+                    <text x="16" y="10" font-family="Inter,sans-serif" font-size="8" font-weight="600" fill="#0066D6">+18.4%</text>
+                  </g>
+                  <g>
+                    <rect x="16" y="60" width="10" height="20" rx="2" fill="#CBD5E1" />
+                    <rect x="32" y="50" width="10" height="30" rx="2" fill="#CBD5E1" />
+                    <rect x="48" y="44" width="10" height="36" rx="2" fill="#0E80F0" />
+                    <rect x="64" y="56" width="10" height="24" rx="2" fill="#CBD5E1" />
+                    <rect x="80" y="38" width="10" height="42" rx="2" fill="#0E80F0" />
+                    <rect x="96" y="48" width="10" height="32" rx="2" fill="#CBD5E1" />
+                    <rect x="112" y="42" width="10" height="38" rx="2" fill="#CBD5E1" />
+                  </g>
+                  <g transform="translate(140,46)">
+                    <rect width="64" height="36" rx="6" fill="#FAFBFC" stroke="#E5E7EB" />
+                    <path d="M 6 24 L 18 18 L 30 22 L 42 12 L 54 8" fill="none" stroke="#0E80F0" stroke-width="1.5" stroke-linecap="round" />
+                    <circle cx="54" cy="8" r="2" fill="#0E80F0" />
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div class="role-body">
+              <div class="role-head">
+                <div class="avatar"><i data-lucide="bar-chart-3" class="w-[18px] h-[18px] text-ink"></i></div>
+                <div>
+                  <div class="name">运营 / 数据分析师</div>
+                  <div class="sub">日常报表、归因诊断</div>
+                </div>
+              </div>
+              <div class="col-grid">
+                <div class="item">
+                  <div class="item-title">周期报表自动化</div>
+                  <div class="item-tags"><span class="pill-mini">定时任务</span><span class="pill-mini">报告</span></div>
+                </div>
+                <div class="item">
+                  <div class="item-title">多源清洗合并</div>
+                  <div class="item-tags"><span class="pill-mini">技能</span><span class="pill-mini">表格</span></div>
+                </div>
+                <div class="item">
+                  <div class="item-title">异动归因诊断</div>
+                  <div class="item-tags"><span class="pill-mini">仪表板</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 业务负责人 -->
+          <div class="card overflow-hidden">
+            <div class="role-banner">
+              <span class="ribbon">决策 · 复盘</span>
+              <span class="badge-dots"><span class="d"></span><span class="d"></span><span class="d"></span></span>
+              <div class="scene">
+                <svg viewBox="0 0 220 100">
+                  <g transform="translate(8,10)">
+                    <rect width="120" height="80" rx="6" fill="#fff" stroke="#E5E7EB" />
+                    <rect x="12" y="14" width="56" height="6" rx="2" fill="#2D3748" opacity="0.85" />
+                    <rect x="12" y="24" width="80" height="3" rx="1.5" fill="#D1D5DB" />
+                    <rect x="12" y="32" width="70" height="3" rx="1.5" fill="#D1D5DB" />
+                    <g transform="translate(12,42)">
+                      <rect width="96" height="2" rx="1" fill="#E5E7EB" />
+                      <rect width="64" height="2" rx="1" fill="#0E80F0" />
+                    </g>
+                    <g transform="translate(12,50)">
+                      <rect width="96" height="2" rx="1" fill="#E5E7EB" />
+                      <rect width="44" height="2" rx="1" fill="#0E80F0" opacity="0.7" />
+                    </g>
+                    <g transform="translate(12,58)">
+                      <rect width="96" height="2" rx="1" fill="#E5E7EB" />
+                      <rect width="78" height="2" rx="1" fill="#0E80F0" />
+                    </g>
+                    <g transform="translate(78,64)">
+                      <rect width="36" height="12" rx="3" fill="#E6F2FE" stroke="#0E80F0" stroke-opacity="0.4" />
+                      <text x="18" y="9" font-family="Inter,sans-serif" font-size="7" fill="#0066D6" text-anchor="middle" font-weight="600">已通过</text>
+                    </g>
+                  </g>
+                  <g transform="translate(132,30)">
+                    <rect width="80" height="60" rx="8" fill="#fff" stroke="#E5E7EB" />
+                    <text x="10" y="14" font-family="Inter,sans-serif" font-size="7" fill="#8B95A8" font-weight="600">营收</text>
+                    <text x="10" y="28" font-family="Inter,sans-serif" font-size="11" fill="#2D3748" font-weight="700">¥12.8M</text>
+                    <path d="M 10 50 L 22 44 L 34 46 L 46 38 L 58 36 L 70 28" fill="none" stroke="#0E80F0" stroke-width="1.5" stroke-linecap="round" />
+                    <circle cx="70" cy="28" r="2" fill="#0E80F0" />
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div class="role-body">
+              <div class="role-head">
+                <div class="avatar"><i data-lucide="briefcase" class="w-[18px] h-[18px] text-ink"></i></div>
+                <div>
+                  <div class="name">业务负责人</div>
+                  <div class="sub">决策、汇报、复盘</div>
+                </div>
+              </div>
+              <div class="col-grid">
+                <div class="item">
+                  <div class="item-title">市场进入决策</div>
+                  <div class="item-tags"><span class="pill-mini">商业地理</span><span class="pill-mini">报告</span></div>
+                </div>
+                <div class="item">
+                  <div class="item-title">月度经营复盘</div>
+                  <div class="item-tags"><span class="pill-mini">报告</span><span class="pill-mini">仪表板</span></div>
+                </div>
+                <div class="item">
+                  <div class="item-title">汇报材料生成</div>
+                  <div class="item-tags"><span class="pill-mini">技能</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 市场 / 行业研究 -->
+          <div class="card overflow-hidden">
+            <div class="role-banner">
+              <span class="ribbon">市场 · 研究</span>
+              <span class="badge-dots"><span class="d"></span><span class="d"></span><span class="d"></span></span>
+              <div class="scene">
+                <svg viewBox="0 0 220 100">
+                  <g transform="translate(8,10)">
+                    <rect width="200" height="80" rx="8" fill="#fff" stroke="#E5E7EB" />
+                    <rect width="200" height="14" rx="8" fill="#FAFBFC" />
+                    <circle cx="10" cy="7" r="2" fill="#FF8B7A" />
+                    <circle cx="18" cy="7" r="2" fill="#FFCC66" />
+                    <circle cx="26" cy="7" r="2" fill="#7DD06B" />
+                    <rect x="40" y="3" width="120" height="8" rx="4" fill="#fff" stroke="#E5E7EB" />
+                    <g transform="translate(12,24)">
+                      <rect width="176" height="14" rx="7" fill="#FAFBFC" stroke="#E5E7EB" />
+                      <circle cx="10" cy="7" r="3" fill="none" stroke="#0E80F0" stroke-width="1" />
+                      <line x1="12.5" y1="9.5" x2="14.5" y2="11.5" stroke="#0E80F0" stroke-width="1" />
+                      <text x="20" y="10" font-family="Inter,sans-serif" font-size="7" fill="#5A6478">行业市场规模 / 2025</text>
+                    </g>
+                    <g transform="translate(12,46)">
+                      <rect width="84" height="22" rx="4" fill="#FAFBFC" />
+                      <rect x="6" y="5" width="50" height="3" rx="1.5" fill="#2D3748" opacity="0.85" />
+                      <rect x="6" y="12" width="68" height="2" rx="1" fill="#D1D5DB" />
+                      <rect x="6" y="16" width="48" height="2" rx="1" fill="#D1D5DB" />
+                    </g>
+                    <g transform="translate(102,46)">
+                      <rect width="84" height="22" rx="4" fill="#E6F2FE" stroke="#0E80F0" stroke-opacity="0.3" />
+                      <rect x="6" y="5" width="50" height="3" rx="1.5" fill="#0066D6" />
+                      <rect x="6" y="12" width="68" height="2" rx="1" fill="#0E80F0" opacity="0.4" />
+                      <rect x="6" y="16" width="40" height="2" rx="1" fill="#0E80F0" opacity="0.4" />
+                    </g>
+                  </g>
+                </svg>
+              </div>
+            </div>
+            <div class="role-body">
+              <div class="role-head">
+                <div class="avatar"><i data-lucide="search" class="w-[18px] h-[18px] text-ink"></i></div>
+                <div>
+                  <div class="name">市场 / 行业研究</div>
+                  <div class="sub">桌面研究、报告交付</div>
+                </div>
+              </div>
+              <div class="col-grid">
+                <div class="item">
+                  <div class="item-title">行业研究报告</div>
+                  <div class="item-tags"><span class="pill-mini">联网搜索</span><span class="pill-mini">报告</span></div>
+                </div>
+                <div class="item">
+                  <div class="item-title">竞品监测</div>
+                  <div class="item-tags"><span class="pill-mini">浏览器助理</span><span class="pill-mini">定时任务</span></div>
+                </div>
+                <div class="item">
+                  <div class="item-title">数据可视化交付</div>
+                  <div class="item-tags"><span class="pill-mini">地图</span><span class="pill-mini">仪表板</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= 按需装配 + 自动化 ======================= -->
+    <section class="py-12">
+      <div
+        class="max-w-[1280px] mx-auto px-6 grid lg:grid-cols-2 gap-3"
+        data-stagger
+      >
+        <div class="card p-9">
+          <span class="pill mb-5">按需装配能力</span>
+          <h3 class="display text-[28px] md:text-[36px] leading-[1.1] mt-5">
+            能干什么，由你来选
+          </h3>
+          <p class="mt-4 text-sub text-[15px] leading-[1.7]">
+            每个会话单独配置工具开关：联网搜索、浏览器、邮箱、MCP
+            服务。也能把自己的工作流写成可复用的「技能」。
+          </p>
+          <div class="mt-7 card-paper p-2">
+            <div
+              class="flex items-center justify-between p-3 hover:bg-surface/60 rounded-xl transition cursor-pointer"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-9 h-9 rounded-full bg-surface flex items-center justify-center"
+                >
+                  <i data-lucide="globe" class="w-4 h-4 text-ink"></i>
+                </div>
+                <div>
+                  <div class="text-[13.5px] font-medium">联网搜索</div>
+                  <div class="text-[11px] text-mute mt-0.5">
+                    通过网络获取最新信息
+                  </div>
+                </div>
+              </div>
+              <div class="toggle on"></div>
+            </div>
+            <div
+              class="flex items-center justify-between p-3 hover:bg-surface/60 rounded-xl transition cursor-pointer"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-9 h-9 rounded-full bg-surface flex items-center justify-center"
+                >
+                  <i data-lucide="globe-2" class="w-4 h-4 text-ink"></i>
+                </div>
+                <div>
+                  <div class="text-[13.5px] font-medium">浏览器</div>
+                  <div class="text-[11px] text-mute mt-0.5">
+                    操作网页、抓取内容
+                  </div>
+                </div>
+              </div>
+              <div class="toggle on"></div>
+            </div>
+            <div
+              class="flex items-center justify-between p-3 hover:bg-surface/60 rounded-xl transition cursor-pointer"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-9 h-9 rounded-full bg-surface flex items-center justify-center"
+                >
+                  <i data-lucide="mail" class="w-4 h-4 text-ink"></i>
+                </div>
+                <div>
+                  <div class="text-[13.5px] font-medium">邮箱</div>
+                  <div class="text-[11px] text-mute mt-0.5">读取与发送邮件</div>
+                </div>
+              </div>
+              <div class="toggle"></div>
+            </div>
+            <div
+              class="flex items-center justify-between p-3 hover:bg-surface/60 rounded-xl transition cursor-pointer"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-9 h-9 rounded-full bg-surface flex items-center justify-center"
+                >
+                  <i data-lucide="plug" class="w-4 h-4 text-ink"></i>
+                </div>
+                <div>
+                  <div class="text-[13.5px] font-medium">MCP 服务</div>
+                  <div class="text-[11px] text-mute mt-0.5">
+                    连接外部 MCP 服务器
+                  </div>
+                </div>
+              </div>
+              <div class="toggle on"></div>
+            </div>
+          </div>
+        </div>
+        <div class="card p-9">
+          <span class="pill mb-5">让 AI 自己跑</span>
+          <h3 class="display text-[28px] md:text-[36px] leading-[1.1] mt-5">
+            从问一次答一次，<br />到全自动交付
+          </h3>
+          <p class="mt-4 text-sub text-[15px] leading-[1.7]">
+            设置定时任务让 AI
+            按时自动跑日报、周报、监测；用浏览器助理处理网页操作类工作。
+          </p>
+          <div class="mt-7 card-paper p-5">
+            <div class="flex items-center justify-between mb-4">
+              <div
+                class="text-[11px] text-mute uppercase tracking-wider font-medium"
+              >
+                本周计划
+              </div>
+              <div
+                class="text-[11px] text-brand font-medium flex items-center gap-1.5"
+              >
+                <span class="w-1.5 h-1.5 rounded-full bg-brand pulse"></span
+                >运行中
+              </div>
+            </div>
+            <div class="space-y-2.5">
+              <div class="flex items-center gap-3 text-[12.5px]">
+                <div class="w-16 text-mute font-mono">周一 08:00</div>
+                <i
+                  data-lucide="check-circle-2"
+                  class="w-4 h-4 text-brand shrink-0"
+                ></i>
+                <div class="flex-1 text-ink">销售日报已发送邮件</div>
+              </div>
+              <div class="flex items-center gap-3 text-[12.5px]">
+                <div class="w-16 text-mute font-mono">周三 08:00</div>
+                <i
+                  data-lucide="check-circle-2"
+                  class="w-4 h-4 text-brand shrink-0"
+                ></i>
+                <div class="flex-1 text-ink">竞品门店监测完成</div>
+              </div>
+              <div class="flex items-center gap-3 text-[12.5px]">
+                <div class="w-16 text-mute font-mono">周五 18:00</div>
+                <i
+                  data-lucide="loader-2"
+                  class="w-4 h-4 text-brand shrink-0 spin"
+                ></i>
+                <div class="flex-1 text-ink">周报正在生成…</div>
+              </div>
+              <div class="flex items-center gap-3 text-[12.5px] opacity-55">
+                <div class="w-16 text-mute font-mono">周日 22:00</div>
+                <i data-lucide="circle" class="w-4 h-4 text-mute shrink-0"></i>
+                <div class="flex-1 text-sub">下周计划生成</div>
+              </div>
+            </div>
+          </div>
+          <div class="mt-3 grid grid-cols-2 gap-2.5">
+            <div class="card-paper p-4 flex items-center gap-3">
+              <div
+                class="w-9 h-9 rounded-full bg-surface flex items-center justify-center shrink-0"
+              >
+                <i data-lucide="clock" class="w-4 h-4 text-ink"></i>
+              </div>
+              <div>
+                <div class="text-[13px] font-semibold">定时任务</div>
+                <div class="text-[11px] text-mute">日报 / 周报 / 监测</div>
+              </div>
+            </div>
+            <div class="card-paper p-4 flex items-center gap-3">
+              <div
+                class="w-9 h-9 rounded-full bg-surface flex items-center justify-center shrink-0"
+              >
+                <i
+                  data-lucide="mouse-pointer-click"
+                  class="w-4 h-4 text-ink"
+                ></i>
+              </div>
+              <div>
+                <div class="text-[13px] font-semibold">浏览器助理</div>
+                <div class="text-[11px] text-mute">网页操作 / 抓取</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= 本地优先 / 数据安全 ======================= -->
+    <section class="py-20">
+      <div class="max-w-[1280px] mx-auto px-6">
+        <div class="grid lg:grid-cols-2 gap-3">
+          <div class="card p-10 lg:p-12 order-2 lg:order-1" data-fade>
+            <div class="flex items-center gap-3 mb-6">
+              <div
+                class="w-10 h-10 rounded-full bg-paper flex items-center justify-center"
+              >
+                <i data-lucide="shield-check" class="w-5 h-5 text-ink"></i>
+              </div>
+              <div class="font-semibold text-[15px]">隐私与执行</div>
+            </div>
+            <div class="space-y-2.5">
+              <div
+                class="card-paper px-5 py-4 flex items-center justify-between"
+              >
+                <span class="text-[14px] text-sub">数据本地处理</span
+                ><span
+                  class="text-[13px] flex items-center gap-1.5 font-medium text-ink"
+                  ><i data-lucide="check" class="w-4 h-4 text-brand"></i>
+                  已开启</span
+                >
+              </div>
+              <div
+                class="card-paper px-5 py-4 flex items-center justify-between"
+              >
+                <span class="text-[14px] text-sub">代码本地沙箱执行</span
+                ><span
+                  class="text-[13px] flex items-center gap-1.5 font-medium text-ink"
+                  ><i data-lucide="check" class="w-4 h-4 text-brand"></i>
+                  已开启</span
+                >
+              </div>
+              <div
+                class="card-paper px-5 py-4 flex items-center justify-between"
+              >
+                <span class="text-[14px] text-sub">受控沙箱隔离</span
+                ><span
+                  class="text-[13px] flex items-center gap-1.5 font-medium text-ink"
+                  ><i data-lucide="check" class="w-4 h-4 text-brand"></i>
+                  已开启</span
+                >
+              </div>
+            </div>
+          </div>
+          <div
+            class="order-1 lg:order-2 lg:pl-8 flex flex-col justify-center"
+            data-fade
+          >
+            <span class="pill mb-5 self-start">本地优先</span>
+            <h2
+              class="display text-[40px] md:text-[56px] leading-[1.05] mt-5 text-ink"
+            >
+              数据不出门，<br />用得放心
+            </h2>
+            <p class="mt-6 text-sub text-[17px] leading-[1.65]">
+              桌面客户端本地处理，文件、产物全部留在你的机器上。代码在受控沙箱里跑，不暴露宿主系统。敏感数据场景也能放心用。
+            </p>
+            <div class="mt-10 grid grid-cols-3 gap-2">
+              <div class="card-paper p-5 text-center">
+                <div
+                  class="w-11 h-11 rounded-full bg-surface flex items-center justify-center mx-auto mb-3"
+                >
+                  <i data-lucide="hard-drive" class="w-5 h-5 text-ink"></i>
+                </div>
+                <div class="text-[13px] font-semibold">本地存储</div>
+                <div class="text-[11px] text-mute mt-1">数据不出门</div>
+              </div>
+              <div class="card-paper p-5 text-center">
+                <div
+                  class="w-11 h-11 rounded-full bg-surface flex items-center justify-center mx-auto mb-3"
+                >
+                  <i data-lucide="lock" class="w-5 h-5 text-ink"></i>
+                </div>
+                <div class="text-[13px] font-semibold">沙箱执行</div>
+                <div class="text-[11px] text-mute mt-1">隔离宿主</div>
+              </div>
+              <div class="card-paper p-5 text-center">
+                <div
+                  class="w-11 h-11 rounded-full bg-surface flex items-center justify-center mx-auto mb-3"
+                >
+                  <i data-lucide="archive" class="w-5 h-5 text-ink"></i>
+                </div>
+                <div class="text-[13px] font-semibold">产物归档</div>
+                <div class="text-[11px] text-mute mt-1">可追溯复用</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= 案例 ======================= -->
+    <section class="py-12">
+      <div class="max-w-[1280px] mx-auto px-6">
+        <div class="card-deep section-frame p-8 md:p-14">
+          <div class="text-center max-w-3xl mx-auto mb-12" data-fade>
+            <h2
+              class="display text-[40px] md:text-[56px] leading-[1.05] text-ink"
+            >
+              真实业务里能怎么用
+            </h2>
+            <p class="mt-5 text-sub text-[17px]">
+              几种典型业务场景下的 DataMind 工作流。
+            </p>
+          </div>
+          <div class="grid md:grid-cols-2 gap-3" data-stagger>
+            <div class="card-paper p-8 arrow-hover cursor-pointer">
+              <div class="flex items-start justify-between mb-3">
+                <div class="text-[12px] text-mute font-medium">
+                  连锁零售 · 选址
+                </div>
+                <i
+                  data-lucide="arrow-up-right"
+                  class="w-5 h-5 text-mute arrow-icon"
+                ></i>
+              </div>
+              <h3 class="text-[22px] font-semibold tracking-tight">
+                华南区新店开拓评估
+              </h3>
+              <p class="mt-4 text-[14.5px] text-sub leading-[1.7]">
+                "找出广州、深圳客流活跃且咖啡密度低的潜力商圈"——AI
+                调用商业地点、品牌数据、人群消费三项数据，自动出综合评分地图与
+                Top 10 候选清单。
+              </p>
+              <div class="mt-6 flex flex-wrap gap-1.5">
+                <span class="pill">商业地理</span><span class="pill">地图</span
+                ><span class="pill">报告</span>
+              </div>
+            </div>
+            <div class="card-paper p-8 arrow-hover cursor-pointer">
+              <div class="flex items-start justify-between mb-3">
+                <div class="text-[12px] text-mute font-medium">
+                  市场研究 · 竞品
+                </div>
+                <i
+                  data-lucide="arrow-up-right"
+                  class="w-5 h-5 text-mute arrow-icon"
+                ></i>
+              </div>
+              <h3 class="text-[22px] font-semibold tracking-tight">
+                连锁咖啡品牌每周战况
+              </h3>
+              <p class="mt-4 text-[14.5px] text-sub leading-[1.7]">
+                浏览器助理每周自动抓三家头部品牌的新店与活动，比对自有门店分布，定时任务每周一早
+                9 点把战况快报推到邮箱。
+              </p>
+              <div class="mt-6 flex flex-wrap gap-1.5">
+                <span class="pill">浏览器助理</span
+                ><span class="pill">定时任务</span
+                ><span class="pill">邮箱</span>
+              </div>
+            </div>
+            <div class="card-paper p-8 arrow-hover cursor-pointer">
+              <div class="flex items-start justify-between mb-3">
+                <div class="text-[12px] text-mute font-medium">
+                  运营分析 · 日报
+                </div>
+                <i
+                  data-lucide="arrow-up-right"
+                  class="w-5 h-5 text-mute arrow-icon"
+                ></i>
+              </div>
+              <h3 class="text-[22px] font-semibold tracking-tight">
+                门店日报自动化
+              </h3>
+              <p class="mt-4 text-[14.5px] text-sub leading-[1.7]">
+                把 ERP 导出的销售明细丢进去，AI
+                自动清洗、对齐、生成日报仪表板和异常归因。日报 8
+                点准时出现在邮箱。
+              </p>
+              <div class="mt-6 flex flex-wrap gap-1.5">
+                <span class="pill">数据清洗</span
+                ><span class="pill">仪表板</span
+                ><span class="pill">定时任务</span>
+              </div>
+            </div>
+            <div class="card-paper p-8 arrow-hover cursor-pointer">
+              <div class="flex items-start justify-between mb-3">
+                <div class="text-[12px] text-mute font-medium">
+                  业务决策 · 复盘
+                </div>
+                <i
+                  data-lucide="arrow-up-right"
+                  class="w-5 h-5 text-mute arrow-icon"
+                ></i>
+              </div>
+              <h3 class="text-[22px] font-semibold tracking-tight">
+                月度经营复盘
+              </h3>
+              <p class="mt-4 text-[14.5px] text-sub leading-[1.7]">
+                "把上月销售、客流、库存按区域复盘，找异动归因"——AI
+                自动出图表、做对比、写摘要，最终输出可直接发给老板的 Word 报告。
+              </p>
+              <div class="mt-6 flex flex-wrap gap-1.5">
+                <span class="pill">报告</span><span class="pill">仪表板</span
+                ><span class="pill">技能</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= 定价导流条 ======================= -->
+    <section id="pricing-link" class="py-12">
+      <div class="max-w-[1280px] mx-auto px-6" data-fade>
+        <div class="card p-8 md:p-12 grid md:grid-cols-12 gap-6 items-center">
+          <div class="md:col-span-8">
+            <h3 class="display text-[28px] md:text-[40px] leading-[1.1]">
+              从 ¥398/月起步，4 档按需选
+            </h3>
+            <p class="mt-3 text-sub text-[15px] leading-[1.65]">
+              对话额度、专属客服按档位升级，商业地理数据库不限次数。
+            </p>
+          </div>
+          <div class="md:col-span-4 flex md:justify-end">
+            <a
+              href="./pricing.html"
+              class="btn-primary px-6 py-3 rounded-full font-medium inline-flex items-center gap-2 text-[14px] arrow-hover"
+              >查看完整定价<i
+                data-lucide="arrow-right"
+                class="w-4 h-4 arrow-icon"
+              ></i
+            ></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= FAQ ======================= -->
+    <section id="faq" class="py-20">
+      <div class="max-w-[1280px] mx-auto px-6">
+        <div class="grid lg:grid-cols-12 gap-10">
+          <div class="lg:col-span-4" data-fade>
+            <h2 class="display text-[40px] md:text-[52px] leading-[1.05]">
+              常见问题
+            </h2>
+            <p class="mt-4 text-[14.5px] text-sub leading-[1.7]">
+              没找到想问的？发邮件至<br /><a href="mailto:zimu.zsn@szshuwei.com" class="text-ink underline hover:text-brand transition"
+                >zimu.zsn@szshuwei.com</a
+              >
+            </p>
+          </div>
+          <div class="lg:col-span-8">
+            <div class="space-y-2.5" data-stagger>
+              <details class="card px-7 py-5 group">
+                <summary
+                  class="cursor-pointer flex items-center justify-between font-semibold text-[15.5px] gap-4"
+                >
+                  <span>数据会被上传到云端吗？</span
+                  ><span
+                    class="chev w-5 h-5 text-[20px] text-mute transition-transform"
+                    >+</span
+                  >
+                </summary>
+                <p class="mt-4 text-[14px] text-sub leading-[1.75]">
+                  DataMind
+                  是桌面客户端，文件、产物默认存在本地。代码在本地受控沙箱中执行，不暴露宿主系统。
+                </p>
+              </details>
+              <details class="card px-7 py-5 group">
+                <summary
+                  class="cursor-pointer flex items-center justify-between font-semibold text-[15.5px] gap-4"
+                >
+                  <span>商业地理数据库的使用有限制吗？</span
+                  ><span
+                    class="chev w-5 h-5 text-[20px] text-mute transition-transform"
+                    >+</span
+                  >
+                </summary>
+                <p class="mt-4 text-[14px] text-sub leading-[1.75]">
+                  所有订阅档位均可不限次数调用商业地理数据库，无需担心次数额度。
+                </p>
+              </details>
+              <details class="card px-7 py-5 group">
+                <summary
+                  class="cursor-pointer flex items-center justify-between font-semibold text-[15.5px] gap-4"
+                >
+                  <span>支持哪些文件格式？</span
+                  ><span
+                    class="chev w-5 h-5 text-[20px] text-mute transition-transform"
+                    >+</span
+                  >
+                </summary>
+                <p class="mt-4 text-[14px] text-sub leading-[1.75]">
+                  Excel / CSV / PDF / Word / 图片 /
+                  网页等常用格式都可直接拖入。AI 自动解析与抽取。
+                </p>
+              </details>
+              <details class="card px-7 py-5 group">
+                <summary
+                  class="cursor-pointer flex items-center justify-between font-semibold text-[15.5px] gap-4"
+                >
+                  <span>支持团队 / 企业方案吗？</span
+                  ><span
+                    class="chev w-5 h-5 text-[20px] text-mute transition-transform"
+                    >+</span
+                  >
+                </summary>
+                <p class="mt-4 text-[14px] text-sub leading-[1.75]">
+                  企业用户可联系销售获取定制方案，包括批量授权、私有数据接入、私有化部署等。
+                </p>
+              </details>
+              <details class="card px-7 py-5 group">
+                <summary
+                  class="cursor-pointer flex items-center justify-between font-semibold text-[15.5px] gap-4"
+                >
+                  <span>如何申请发票 / 退款？</span
+                  ><span
+                    class="chev w-5 h-5 text-[20px] text-mute transition-transform"
+                    >+</span
+                  >
+                </summary>
+                <p class="mt-4 text-[14px] text-sub leading-[1.75]">
+                  订阅后可在产品内的账户页申请电子发票。退款政策详见用户协议。
+                </p>
+              </details>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= BOTTOM CTA ======================= -->
+    <section id="download" class="py-12">
+      <div class="max-w-[1280px] mx-auto px-6">
+        <div
+          class="section-frame p-10 md:p-20 text-center relative overflow-hidden"
+          style="background: #0E80F0; color: #ffffff;"
+          data-fade
+        >
+          <div class="relative">
+            <h2
+              class="display text-[44px] md:text-[80px] leading-[1] text-white"
+            >
+              让 AI 帮你做完<br />下一份数据分析
+            </h2>
+            <p
+              class="mt-7 text-white/85 text-[17px] max-w-xl mx-auto leading-[1.65]"
+            >
+              本地下载，免费开始。
+            </p>
+            <div class="mt-10 flex flex-wrap items-center justify-center gap-3">
+              <a
+                href="#"
+                class="bg-white text-brand px-7 py-3.5 rounded-full font-semibold inline-flex items-center gap-2 text-[14px] hover:bg-paper transition"
+                ><svg viewBox="0 0 384 512" fill="currentColor" class="w-4 h-4">
+                  <path
+                    d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"
+                  /></svg
+                >macOS 下载</a
+              >
+              <a
+                href="#"
+                class="bg-white text-brand px-7 py-3.5 rounded-full font-semibold inline-flex items-center gap-2 text-[14px] hover:bg-paper transition"
+                ><i data-lucide="monitor" class="w-4 h-4"></i>Windows 下载</a
+              >
+              <a
+                href="./contact.html"
+                class="border border-white/40 text-white px-7 py-3.5 rounded-full font-medium inline-flex items-center gap-2 text-[14px] hover:bg-white/10 transition"
+                >联系我们<i data-lucide="arrow-right" class="w-4 h-4"></i
+              ></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= FOOTER ======================= -->
+    <footer class="py-14">
+      <div class="max-w-[1280px] mx-auto px-6">
+        <div class="grid md:grid-cols-12 gap-10">
+          <div class="md:col-span-4">
+            <div class="flex items-center gap-2.5">
+              <img src="./static/logo/logo-icon.png" alt="" class="h-8 w-auto">
+              <span
+                class="font-bold tracking-[-0.03em] text-[20px] leading-none translate-y-px"
+              >
+                <span class="text-ink">Data</span
+                ><span class="text-brand">Mind</span>
+              </span>
+            </div>
+            <p class="mt-4 text-[14px] text-sub leading-[1.7] max-w-[28ch]">
+              像分析师一样工作的 AI 数据助手
+            </p>
+          </div>
+          <div class="md:col-span-2">
+            <div
+              class="text-[12.5px] uppercase tracking-wider text-mute mb-4 font-medium"
+            >
+              产品
+            </div>
+            <ul class="space-y-2.5 text-[13.5px] text-sub">
+              <li>
+                <a href="#geo" class="lnk hover:text-ink">商业地理数据</a>
+              </li>
+              <li><a href="#scenarios" class="lnk hover:text-ink">场景</a></li>
+              <li>
+                <a href="./pricing.html" class="lnk hover:text-ink">定价</a>
+              </li>
+              <li><a href="#download" class="lnk hover:text-ink">下载</a></li>
+            </ul>
+          </div>
+          <div class="md:col-span-2">
+            <div
+              class="text-[12.5px] uppercase tracking-wider text-mute mb-4 font-medium"
+            >
+              公司
+            </div>
+            <ul class="space-y-2.5 text-[13.5px] text-sub">
+              <li>
+                <a href="./contact.html" class="lnk hover:text-ink">联系我们</a>
+              </li>
+              <li>
+                <a href="./about.html" class="lnk hover:text-ink">关于我们</a>
+              </li>
+            </ul>
+          </div>
+          <div class="md:col-span-2">
+            <div
+              class="text-[12.5px] uppercase tracking-wider text-mute mb-4 font-medium"
+            >
+              法务
+            </div>
+            <ul class="space-y-2.5 text-[13.5px] text-sub">
+              <li>
+                <a href="./privacy.html" class="lnk hover:text-ink">隐私政策</a>
+              </li>
+              <li>
+                <a href="./terms.html" class="lnk hover:text-ink">服务条款</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="mt-12 pt-6 border-t border-line text-[12.5px] text-mute">
+          <div class="flex flex-wrap items-center justify-center gap-2 text-center">
+            <span>Copyright @ 深圳数位大数据科技有限公司 All Rights Reserved</span>
+            <span aria-hidden="true" class="opacity-60">|</span>
+            <span>粤ICP备15041214号</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      lucide.createIcons();
+
+      // ===== Download dropdown =====
+      document.querySelectorAll(".dl-dropdown").forEach((d) => {
+        const btn = d.querySelector("button");
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          document.querySelectorAll(".dl-dropdown.open").forEach((o) => {
+            if (o !== d) o.classList.remove("open");
+          });
+          d.classList.toggle("open");
+        });
+      });
+      document.addEventListener("click", () => {
+        document
+          .querySelectorAll(".dl-dropdown.open")
+          .forEach((d) => d.classList.remove("open"));
+      });
+
+      // Placeholder download buttons — prevent jump-to-top until real URLs land
+      document.addEventListener("click", (e) => {
+        const a = e.target.closest('a[href="#"]');
+        if (a) e.preventDefault();
+      });
+
+      // ===== 4-step card hover highlight =====
+      const stepCards = Array.from(document.querySelectorAll(".step-card"));
+      if (stepCards.length) {
+        stepCards.forEach((card) => {
+          card.addEventListener("mouseenter", () => {
+            stepCards.forEach((c) => c.classList.remove("step-card-active"));
+            card.classList.add("step-card-active");
+          });
+        });
+      }
+
+      // ===== GSAP Scroll animations =====
+      if (window.gsap && window.ScrollTrigger) {
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.utils.toArray("[data-fade]").forEach((el) => {
+          gsap.fromTo(
+            el,
+            { y: 28, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.9,
+              ease: "power3.out",
+              scrollTrigger: { trigger: el, start: "top 88%", once: true },
+            },
+          );
+        });
+        gsap.utils.toArray("[data-stagger]").forEach((group) => {
+          gsap.fromTo(
+            group.children,
+            { y: 30, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.8,
+              ease: "power3.out",
+              stagger: 0.1,
+              scrollTrigger: { trigger: group, start: "top 85%", once: true },
+            },
+          );
+        });
+        gsap.utils.toArray("[data-count]").forEach((el) => {
+          ScrollTrigger.create({
+            trigger: el,
+            start: "top 92%",
+            once: true,
+            onEnter: () => {
+              const target = parseFloat(el.dataset.count);
+              const suffix = el.dataset.suffix || "";
+              const obj = { v: 0 };
+              gsap.to(obj, {
+                v: target,
+                duration: 1.4,
+                ease: "power2.out",
+                onUpdate: () => {
+                  el.textContent = Math.round(obj.v).toLocaleString() + suffix;
+                },
+              });
+            },
+          });
+        });
+      }
+
+      // ===== Hero auto-demo cycle =====
+      (function () {
+        const typingEl = document.getElementById("hero-typing");
+        const caretEl = document.getElementById("hero-caret");
+        const phaseLabel = document.getElementById("phase-label");
+        const stepTools = document.getElementById("step-tools");
+        const stepChart = document.getElementById("step-chart");
+        const chartBars = document.getElementById("chart-bars");
+        const artMap = document.getElementById("art-map");
+        const artReport = document.getElementById("art-report");
+        const artCode = document.getElementById("art-code");
+        if (!typingEl) return;
+
+        const text = "分析广州天河区咖啡店密度，给我推荐 3 个适合开新店的位置";
+
+        function reset() {
+          typingEl.textContent = "";
+          if (caretEl) caretEl.style.display = "inline-block";
+          [stepTools, stepChart, artMap, artReport, artCode].forEach(
+            (el) => el && el.classList.remove("show"),
+          );
+          if (chartBars) chartBars.classList.remove("bars-on");
+        }
+
+        async function cycle() {
+          reset();
+          phaseLabel.textContent = "提问中…";
+          for (let i = 0; i <= text.length; i++) {
+            typingEl.textContent = text.slice(0, i);
+            await new Promise((r) => setTimeout(r, 50));
+          }
+          if (caretEl) caretEl.style.display = "none";
+          await new Promise((r) => setTimeout(r, 500));
+
+          phaseLabel.textContent = "调用商业地理数据库…";
+          stepTools.classList.add("show");
+          await new Promise((r) => setTimeout(r, 900));
+
+          phaseLabel.textContent = "生成图表…";
+          stepChart.classList.add("show");
+          await new Promise((r) => setTimeout(r, 200));
+          chartBars.classList.add("bars-on");
+          await new Promise((r) => setTimeout(r, 1200));
+
+          phaseLabel.textContent = "产物归档…";
+          artMap.classList.add("show");
+          await new Promise((r) => setTimeout(r, 350));
+          artReport.classList.add("show");
+          await new Promise((r) => setTimeout(r, 350));
+          artCode.classList.add("show");
+          await new Promise((r) => setTimeout(r, 1800));
+
+          phaseLabel.textContent = "完成 ·";
+          await new Promise((r) => setTimeout(r, 2000));
+          cycle();
+        }
+        cycle();
+      })();
+
+      // ===== Real Leaflet map (OSM + 自动轮播) =====
+      (function () {
+        const mapEl = document.getElementById("real-map");
+        if (!mapEl || !window.L) return;
+
+        const map = L.map("real-map", {
+          center: [23.133, 113.332],
+          zoom: 14,
+          zoomControl: false,
+          attributionControl: false,
+          scrollWheelZoom: false,
+          doubleClickZoom: false,
+          dragging: true,
+          keyboard: false,
+        });
+
+        // CartoDB Voyager (OSM-based, multilingual, hotlink-friendly)
+        L.tileLayer(
+          "https://c.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+          {
+            maxZoom: 19,
+          },
+        ).addTo(map);
+
+        // 5 districts with comparison stats (matches "对比商圈" scenario)
+        const districts = [
+          {
+            lat: 23.151,
+            lng: 113.327,
+            name: "天河北",
+            radius: 520,
+            pois: 92,
+            brands: 240,
+            fnb: 25,
+            flow: "高",
+            insight: "商务办公密集 · 30-45 岁中高消费客群",
+          },
+          {
+            lat: 23.137,
+            lng: 113.33,
+            name: "天河城",
+            radius: 640,
+            pois: 187,
+            brands: 480,
+            fnb: 38,
+            flow: "极高",
+            insight: "年轻白领 · 周末客流爆发，餐饮零售双活跃",
+          },
+          {
+            lat: 23.118,
+            lng: 113.331,
+            name: "珠江新城",
+            radius: 780,
+            pois: 165,
+            brands: 420,
+            fnb: 32,
+            flow: "极高",
+            insight: "CBD 高端商务 · 高净值客群占比 38%",
+          },
+          {
+            lat: 23.142,
+            lng: 113.358,
+            name: "石牌",
+            radius: 480,
+            pois: 108,
+            brands: 180,
+            fnb: 48,
+            flow: "中",
+            insight: "高校 + 数码城 · 学生与极客客群占主",
+          },
+          {
+            lat: 23.13,
+            lng: 113.319,
+            name: "体育中心",
+            radius: 540,
+            pois: 132,
+            brands: 260,
+            fnb: 35,
+            flow: "高",
+            insight: "运动场馆 · 周末家庭与年轻客群活跃",
+          },
+        ];
+
+        const districtCircles = [];
+        districts.forEach((d) => {
+          // Zone overlay
+          const circle = L.circle([d.lat, d.lng], {
+            radius: d.radius,
+            color: "#0E80F0",
+            weight: 1.5,
+            fillColor: "#0E80F0",
+            fillOpacity: 0.1,
+            interactive: true,
+          }).addTo(map);
+
+          circle.bindTooltip(
+            '<div class="district-tip-head">' +
+              '<span class="district-tip-name">' +
+              d.name +
+              "</span>" +
+              '<span class="district-tip-flow">客流 ' +
+              d.flow +
+              "</span>" +
+              "</div>" +
+              '<div class="district-tip-stats">' +
+              "<span><b>" +
+              d.pois +
+              "</b> POI</span>" +
+              "<span><b>" +
+              d.brands +
+              "</b> 品牌进驻</span>" +
+              "<span>餐饮占 <b>" +
+              d.fnb +
+              "%</b></span>" +
+              "</div>" +
+              '<div class="district-tip-insight">' +
+              d.insight +
+              "</div>",
+            {
+              direction: "top",
+              className: "district-tip",
+              sticky: false,
+              opacity: 1,
+            },
+          );
+
+          // Center label marker
+          L.marker([d.lat, d.lng], {
+            icon: L.divIcon({
+              className: "",
+              html:
+                '<div class="district-label"><b>' +
+                d.name +
+                "</b><span>" +
+                d.pois +
+                " POI · 客流 " +
+                d.flow +
+                "</span></div>",
+              iconSize: [130, 38],
+              iconAnchor: [65, 19],
+            }),
+            interactive: false,
+            keyboard: false,
+          }).addTo(map);
+
+          districtCircles.push(circle);
+        });
+
+        // Auto-cycle through 5 districts every ~4s
+        let cycleIdx = -1;
+        let cyclePaused = false;
+        function tick() {
+          if (cyclePaused) return;
+          if (cycleIdx >= 0 && districtCircles[cycleIdx])
+            districtCircles[cycleIdx].closeTooltip();
+          cycleIdx = (cycleIdx + 1) % districtCircles.length;
+          if (districtCircles[cycleIdx])
+            districtCircles[cycleIdx].openTooltip();
+        }
+        setTimeout(tick, 1200);
+        setInterval(tick, 4000);
+
+        mapEl.addEventListener("mouseenter", () => {
+          cyclePaused = true;
+          if (cycleIdx >= 0 && districtCircles[cycleIdx])
+            districtCircles[cycleIdx].closeTooltip();
+        });
+        mapEl.addEventListener("mouseleave", () => {
+          cyclePaused = false;
+          cycleIdx = -1;
+        });
+
+        setTimeout(() => map.invalidateSize(), 100);
+      })();
+    </script>
+    <script src="/DataMind/js/qiyu-kefu.js"></script>
+  </body>
+</html>
+
+
+
+
+

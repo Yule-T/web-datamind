@@ -1,0 +1,677 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>服务条款 · DataMind</title>
+    <link rel="icon" type="image/png" href="./static/logo/logo-icon.png" />
+    <link rel="shortcut icon" type="image/png" href="./static/logo/logo-icon.png" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              paper: "#FAFAFB",
+              surface: "#F1F2F4",
+              surface2: "#E6E8EC",
+              ink: "#2D3748",
+              ink2: "#2D3142",
+              sub: "#5A6478",
+              mute: "#8B95A8",
+              line: "#E5E7EB",
+              line2: "#D1D5DB",
+              brand: "#0E80F0",
+              brandDeep: "#0066D6",
+              brandSoft: "#E6F2FE",
+            },
+            fontFamily: {
+              sans: ["Inter", "Noto Sans SC", "system-ui", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        background: #ffffff;
+        color: #2D3748;
+        font-family: "Inter", "Noto Sans SC", system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        letter-spacing: -0.01em;
+      }
+      .display {
+        letter-spacing: -0.025em;
+        font-weight: 500;
+      }
+
+      .card {
+        background: #ffffff;
+        border: 1px solid #eceef2;
+        border-radius: 24px;
+      }
+      .card-deep {
+        background: #f5f6f8;
+        border-radius: 24px;
+      }
+      .card-paper {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        border-radius: 20px;
+      }
+
+      .btn-primary {
+        background: #0E80F0;
+        color: #ffffff;
+        transition: all 0.15s ease;
+        border: 1px solid #0E80F0;
+      }
+      .btn-primary:hover {
+        background: #0066D6;
+        border-color: #0066D6;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 12px;
+        padding: 5px 11px;
+        border-radius: 999px;
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        color: #5A6478;
+      }
+      .pill-dark {
+        background: #2d3142;
+        color: #ffffff;
+        border-color: #2d3142;
+      }
+      .pill-brand {
+        background: #E6F2FE;
+        color: #0066D6;
+        border-color: #BFDDFB;
+      }
+      .dot {
+        width: 6px;
+        height: 6px;
+        border-radius: 999px;
+        background: #0E80F0;
+      }
+
+      .lnk {
+        position: relative;
+      }
+      .lnk::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -3px;
+        height: 1px;
+        background: currentColor;
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.3s ease;
+      }
+      .lnk:hover::after {
+        transform: scaleX(1);
+      }
+
+      .blob {
+        position: absolute;
+        width: 520px;
+        height: 520px;
+        border-radius: 999px;
+        filter: blur(120px);
+        opacity: 0.55;
+        pointer-events: none;
+      }
+
+      .doc h2 {
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: -0.02em;
+        color: #2D3748;
+        margin-top: 48px;
+        margin-bottom: 12px;
+        padding-top: 24px;
+      }
+      .doc h2:first-child {
+        margin-top: 0;
+        padding-top: 0;
+      }
+      .doc h3 {
+        font-size: 15px;
+        font-weight: 600;
+        color: #2D3748;
+        margin-top: 28px;
+        margin-bottom: 8px;
+      }
+      .doc p,
+      .doc li {
+        font-size: 14.5px;
+        line-height: 1.85;
+        color: #5A6478;
+      }
+      .doc p {
+        margin-bottom: 14px;
+      }
+      .doc ul {
+        padding-left: 22px;
+        margin-bottom: 14px;
+      }
+      .doc li {
+        list-style: disc;
+        margin-bottom: 6px;
+      }
+      .doc strong {
+        color: #2D3748;
+        font-weight: 600;
+      }
+      .doc a {
+        color: #0E80F0;
+      }
+      .doc a:hover {
+        text-decoration: underline;
+      }
+
+      .toc-link {
+        font-size: 13px;
+        color: #5A6478;
+        padding: 6px 12px;
+        border-radius: 8px;
+        display: block;
+        transition: all 0.15s ease;
+      }
+      .toc-link:hover {
+        background: #f1f2f4;
+        color: #2D3748;
+      }
+      .sticky-toc {
+        position: sticky;
+        top: 100px;
+      }
+
+      section[id] {
+        scroll-margin-top: 80px;
+      }
+      [data-fade] {
+        opacity: 0;
+        transform: translateY(20px);
+        transition:
+          opacity 0.8s ease,
+          transform 0.8s ease;
+      }
+      [data-fade].in {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Download dropdown */
+      .dl-dropdown {
+        position: relative;
+      }
+      .dl-dropdown.open {
+        z-index: 9999;
+      }
+      .dl-menu {
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(4px);
+        transition:
+          opacity 0.2s ease,
+          transform 0.2s ease;
+        z-index: 9999;
+        box-shadow:
+          0 0 0 1px rgba(31, 35, 48, 0.06),
+          0 24px 50px -16px rgba(31, 35, 48, 0.3),
+          0 12px 24px -12px rgba(31, 35, 48, 0.18);
+      }
+      .dl-dropdown.open > .dl-menu {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+      }
+      .dl-dropdown.open > button > .dl-chev {
+        transform: rotate(180deg);
+      }
+      .dl-menu::before {
+        content: "";
+        position: absolute;
+        top: -6px;
+        right: 24px;
+        transform: rotate(45deg);
+        width: 12px;
+        height: 12px;
+        background: #ffffff;
+        border-left: 1px solid #e5e7eb;
+        border-top: 1px solid #e5e7eb;
+        border-top-left-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ======================= NAV ======================= -->
+  <header class="fixed top-0 inset-x-0 z-50 bg-paper/85 backdrop-blur-md border-b border-line">
+    <div class="max-w-[1280px] mx-auto px-6 py-2.5 flex items-center justify-between">
+      <a href="./index.html" class="flex items-center gap-2 pl-3">
+          <img src="./static/logo/logo-icon.png" alt="" class="h-7 w-auto">
+  <span class="font-bold tracking-[-0.03em] text-[17px] leading-none translate-y-px"><span class="text-ink">Data</span><span class="text-brand">Mind</span></span>
+</a>
+      <nav class="hidden md:flex items-center gap-6 text-[14px] text-sub">
+        <a href="./index.html#geo" class="lnk hover:text-ink transition">商业地理数据</a>
+        <a href="./index.html#scenarios" class="lnk hover:text-ink transition">场景</a>
+        <a href="./index.html#workspace" class="lnk hover:text-ink transition">产品</a>
+        <a href="./pricing.html" class="lnk hover:text-ink transition">定价</a>
+        <a href="./about.html" class="lnk hover:text-ink transition">关于我们</a>
+        <a href="./contact.html" class="lnk hover:text-ink transition">联系我们</a>
+        <a href="./index.html#faq" class="lnk hover:text-ink transition">常见问题</a>
+      </nav>
+      <div class="flex items-center gap-2 pr-1">
+        <div class="relative dl-dropdown">
+          <button type="button" class="btn-primary text-[13px] font-medium pl-4 pr-3 py-2 rounded-full inline-flex items-center gap-1.5">
+            免费下载
+            <svg class="dl-chev w-3 h-3 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+          </button>
+          <div class="dl-menu absolute right-0 top-full mt-2 w-60 bg-white border border-line rounded-2xl shadow-xl shadow-ink/10 p-2">
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface group transition">
+              <svg viewBox="0 0 384 512" fill="currentColor" class="w-4 h-4 text-ink"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" /></svg>
+              <div class="flex-1 text-left"><div class="text-[13.5px] font-semibold text-ink">macOS</div></div>
+              <i data-lucide="download" class="w-3.5 h-3.5 text-mute group-hover:text-brand transition"></i>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface group transition">
+              <i data-lucide="monitor" class="w-4 h-4 text-ink"></i>
+              <div class="flex-1 text-left"><div class="text-[13.5px] font-semibold text-ink">Windows</div></div>
+              <i data-lucide="download" class="w-3.5 h-3.5 text-mute group-hover:text-brand transition"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+    <!-- ======================= HERO ======================= -->
+    <section class="relative pt-28 pb-12 overflow-hidden">
+      <div
+        class="blob"
+        style="background: #c7d5fb; top: -100px; right: -120px; opacity: 0.45"
+      ></div>
+      <div
+        class="blob"
+        style="background: #e6e8ec; top: 200px; left: -200px; opacity: 0.55"
+      ></div>
+
+      <div class="relative max-w-[1280px] mx-auto px-6">
+        <div class="text-center max-w-3xl mx-auto">
+          <div class="inline-flex items-center gap-2 pill mb-6">
+            <span class="dot"></span>
+            <span>最后更新 · 2026 年 4 月 27 日</span>
+          </div>
+          <h1
+            class="display text-[44px] md:text-[64px] leading-[1.05] text-ink"
+          >
+            服务条款
+          </h1>
+          <p class="mt-6 text-[16px] text-sub max-w-2xl mx-auto leading-[1.7]">
+            本条款约定 DataMind 与你之间的权利、义务与责任。请在使用前完整阅读。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= NOTICE ======================= -->
+    <section class="pb-12">
+      <div class="max-w-[1280px] mx-auto px-6">
+        <div class="max-w-3xl mx-auto card-deep p-5 flex items-start gap-3">
+          <i data-lucide="info" class="w-5 h-5 text-brand shrink-0 mt-0.5"></i>
+          <p class="text-[13.5px] text-sub leading-[1.7]">
+            本草案为产品上线前的模板，最终条款以经法务审核后正式发布的版本为准。如有任何疑问，请发邮件至
+            <a href="mailto:zimu.zsn@szshuwei.com" class="text-ink underline"
+              >zimu.zsn@szshuwei.com</a
+            >。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= MAIN ======================= -->
+    <section class="pb-20">
+      <div class="max-w-[1280px] mx-auto px-6">
+        <div class="grid lg:grid-cols-12 gap-10">
+          <!-- TOC -->
+          <aside class="lg:col-span-3 hidden lg:block">
+            <div class="sticky-toc">
+              <div
+                class="text-[12px] uppercase tracking-wider text-mute font-medium mb-3 px-3"
+              >
+                目录
+              </div>
+              <nav class="space-y-1">
+                <a href="#s-accept" class="toc-link">1. 接受条款</a>
+                <a href="#s-service" class="toc-link">2. 服务说明</a>
+                <a href="#s-account" class="toc-link">3. 账户与订阅</a>
+                <a href="#s-conduct" class="toc-link">4. 行为规范</a>
+                <a href="#s-ip" class="toc-link">5. 知识产权</a>
+                <a href="#s-data" class="toc-link">6. 商业地理数据</a>
+                <a href="#s-disclaim" class="toc-link">7. 免责声明</a>
+                <a href="#s-liability" class="toc-link">8. 责任限制</a>
+                <a href="#s-terminate" class="toc-link">9. 终止</a>
+                <a href="#s-law" class="toc-link">10. 适用法律</a>
+                <a href="#s-change" class="toc-link">11. 条款变更</a>
+              </nav>
+            </div>
+          </aside>
+
+          <!-- BODY -->
+          <article class="lg:col-span-9 doc">
+            <section id="s-accept" data-fade>
+              <h2>1. 条款的接受</h2>
+              <p>
+                本《服务条款》（以下简称"本条款"）是你与 DataMind 运营主体
+                [运营主体公司全称待补]（以下简称"我们"）之间，就你访问 DataMind
+                官网及使用 DataMind 桌面客户端、订阅服务等所达成的协议。
+              </p>
+              <p>
+                当你完成账户注册、订阅付费或开始使用 DataMind
+                时，即视为你已完整阅读、理解并同意本条款的全部内容。如不同意，请停止使用本服务。
+              </p>
+            </section>
+
+            <section id="s-service" data-fade>
+              <h2>2. 服务说明</h2>
+              <p>DataMind 是一款本地优先的桌面 AI 数据分析工作台。我们提供：</p>
+              <ul>
+                <li>桌面客户端软件（macOS / Windows）；</li>
+                <li>商业地理数据库的数据查询与分析能力；</li>
+                <li>AI 对话、数据清洗、可视化、报告生成等功能；</li>
+                <li>定时任务、浏览器助理等自动化能力；</li>
+                <li>订阅、账户、客服等配套服务。</li>
+              </ul>
+              <p>
+                各项功能与额度按你订阅的方案而定，以产品内实时显示及
+                <a href="pricing.html">定价页</a>说明为准。
+              </p>
+            </section>
+
+            <section id="s-account" data-fade>
+              <h2>3. 账户与订阅</h2>
+              <h3>3.1 账户注册</h3>
+              <p>
+                你需提供真实、准确、完整的注册信息，并对账户密码及账户下的所有活动负责。
+              </p>
+              <h3>3.2 订阅与付费</h3>
+              <p>
+                订阅档位、价格、配额详见<a href="pricing.html">定价页</a
+                >。订阅自付款成功之日起生效，按月计费、自动续费，可随时在产品内的账户页关闭续费。
+              </p>
+              <h3>3.3 升级 / 降级</h3>
+              <p>升级立即生效，按比例补差价；降级在下一计费周期生效。</p>
+              <h3>3.4 退款</h3>
+              <p>
+                订阅后 7 天内若你未实际使用相关付费功能，可申请全额退款；超过 7
+                天或已产生使用，按实际使用情况协商处理。
+              </p>
+            </section>
+
+            <section id="s-conduct" data-fade>
+              <h2>4. 用户行为规范</h2>
+              <p>使用 DataMind 时，你承诺不会：</p>
+              <ul>
+                <li>违反国家法律、法规、政策及公序良俗；</li>
+                <li>侵犯他人知识产权、肖像权、隐私权或其他合法权益；</li>
+                <li>
+                  利用 DataMind 进行反向工程、爬取、攻击我们的服务器或服务接口；
+                </li>
+                <li>规避或破坏本服务的额度、计费、安全机制；</li>
+                <li>在未取得授权的情况下转售、转租或对外提供本服务；</li>
+                <li>恶意提交虚假信息、批量注册、使用机器人或脚本滥用服务。</li>
+              </ul>
+              <p>
+                违反上述任一条款，我们有权暂停或终止你的服务，并保留追究法律责任的权利。
+              </p>
+            </section>
+
+            <section id="s-ip" data-fade>
+              <h2>5. 知识产权</h2>
+              <h3>5.1 我们的权利</h3>
+              <p>
+                DataMind
+                的软件、商标、Logo、文档、商业地理数据库、网站设计与代码等，由
+                [运营主体公司全称待补]
+                或其授权方拥有完整的知识产权。除本条款明确授予之外，未经书面许可你不得复制、分发、修改、反向工程或商用。
+              </p>
+              <h3>5.2 你的内容</h3>
+              <p>
+                你在 DataMind
+                中处理的本地文件、生成的产物（代码、图表、报告等）的知识产权归你或你授权来源所有。我们不主张对你本地内容的所有权。
+              </p>
+              <h3>5.3 反馈</h3>
+              <p>
+                你向我们提交的产品反馈、改进建议，我们可以无偿用于产品改进，无须另行通知或补偿。
+              </p>
+            </section>
+
+            <section id="s-data" data-fade>
+              <h2>6. 商业地理数据库使用规范</h2>
+              <p>
+                商业地理数据库为 DataMind
+                自有数据资产。你按订阅档位获得每月调用额度，可在 DataMind
+                客户端内使用所获结果进行业务分析、报告制作。但你不得：
+              </p>
+              <ul>
+                <li>批量导出、转售或对外重新分发数据库原始数据；</li>
+                <li>用作训练第三方模型；</li>
+                <li>用于规避我方计费机制的任何行为。</li>
+              </ul>
+              <p>
+                需进行批量授权或数据接入，请通过<a href="contact.html"
+                  >联系销售</a
+                >另行洽谈。
+              </p>
+            </section>
+
+            <section id="s-disclaim" data-fade>
+              <h2>7. 免责声明</h2>
+              <p>
+                DataMind 提供的是 AI 辅助分析能力，AI
+                生成的结论、报告、推荐均为参考，不构成最终决策依据。你应对依据这些结果做出的业务决策自行承担责任。
+              </p>
+              <p>
+                商业地理数据库的数据可能存在更新延迟、采样误差、覆盖不全等情况，我们尽合理努力保证数据质量，但不对其绝对完备性、准确性作出保证。
+              </p>
+              <p>
+                对于因不可抗力（包括但不限于网络故障、电力中断、政府行为等）导致服务中断或数据丢失，我们在法律允许的范围内不承担责任。
+              </p>
+            </section>
+
+            <section id="s-liability" data-fade>
+              <h2>8. 责任限制</h2>
+              <p>
+                在法律允许的最大范围内，我们对你或任何第三方就使用或无法使用本服务所造成的任何间接、附带、特殊、惩罚性或后果性损失（包括但不限于利润、数据、商誉的损失）不承担责任。
+              </p>
+              <p>
+                我们的累计赔偿责任，以你过去 12
+                个月内实际向我们支付的服务费用为上限。
+              </p>
+            </section>
+
+            <section id="s-terminate" data-fade>
+              <h2>9. 终止</h2>
+              <p>你可随时停止使用本服务、关闭自动续费或申请注销账户。</p>
+              <p>
+                如你严重违反本条款（包括但不限于第 4
+                条用户行为规范），我们有权立即暂停或终止你的服务而无需事先通知，已支付费用不予退还。
+              </p>
+              <p>
+                终止后你仍应遵守本条款中性质上应当继续生效的条款，包括但不限于知识产权、保密义务、责任限制、争议解决等。
+              </p>
+            </section>
+
+            <section id="s-law" data-fade>
+              <h2>10. 适用法律与争议解决</h2>
+              <p>
+                本条款的订立、效力、解释、履行均适用中华人民共和国法律。如双方就本条款的解释或履行发生任何争议，应首先友好协商解决；协商不成的，任一方有权向
+                [运营主体公司注册地] 有管辖权的人民法院提起诉讼。
+              </p>
+            </section>
+
+            <section id="s-change" data-fade>
+              <h2>11. 条款变更与生效</h2>
+              <p>
+                我们可能根据法规变化、产品调整、运营需要更新本条款。重大变更将通过官网公告、产品内通知或邮件方式提前
+                7
+                天告知。变更后你继续使用即视为接受新版本。如不接受，请停止使用并申请注销账户。
+              </p>
+              <p class="mt-8 text-[12.5px] text-mute">
+                本页最后更新于
+                <strong class="text-sub">2026 年 4 月 27 日</strong
+                >，自该日起生效。
+              </p>
+            </section>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================= FOOTER ======================= -->
+    <footer class="py-14 mt-8">
+      <div class="max-w-[1280px] mx-auto px-6">
+        <div class="grid md:grid-cols-12 gap-10">
+          <div class="md:col-span-4">
+            <div class="flex items-center gap-2.5">
+              <img src="./static/logo/logo-icon.png" alt="" class="h-8 w-auto">
+              <span class="font-bold tracking-[-0.03em] text-[20px] leading-none translate-y-px"><span class="text-ink">Data</span><span class="text-brand">Mind</span></span>
+            </div>
+            <p class="mt-4 text-[14px] text-sub leading-[1.7] max-w-[28ch]">
+              像分析师一样工作的 AI 数据助手
+            </p>
+          </div>
+          <div class="md:col-span-2">
+            <div
+              class="text-[12.5px] uppercase tracking-wider text-mute mb-4 font-medium"
+            >
+              产品
+            </div>
+            <ul class="space-y-2.5 text-[13.5px] text-sub">
+              <li>
+                <a href="index.html#geo" class="lnk hover:text-ink"
+                  >商业地理数据</a
+                >
+              </li>
+              <li>
+                <a href="index.html#scenarios" class="lnk hover:text-ink"
+                  >场景</a
+                >
+              </li>
+              <li>
+                <a href="pricing.html" class="lnk hover:text-ink">定价</a>
+              </li>
+              <li>
+                <a href="index.html#download" class="lnk hover:text-ink"
+                  >下载</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div class="md:col-span-2">
+            <div
+              class="text-[12.5px] uppercase tracking-wider text-mute mb-4 font-medium"
+            >
+              公司
+            </div>
+            <ul class="space-y-2.5 text-[13.5px] text-sub">
+              <li>
+                <a href="contact.html" class="lnk hover:text-ink">联系销售</a>
+              </li>
+              <li><a href="./about.html" class="lnk hover:text-ink">关于我们</a></li>
+            </ul>
+          </div>
+          <div class="md:col-span-2">
+            <div
+              class="text-[12.5px] uppercase tracking-wider text-mute mb-4 font-medium"
+            >
+              法务
+            </div>
+            <ul class="space-y-2.5 text-[13.5px] text-sub">
+              <li>
+                <a href="privacy.html" class="lnk hover:text-ink">隐私政策</a>
+              </li>
+              <li>
+                <a href="terms.html" class="lnk hover:text-ink">服务条款</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div class="mt-12 pt-6 border-t border-line text-[12.5px] text-mute">
+          <div class="flex flex-wrap items-center justify-center gap-2 text-center">
+            <span>Copyright @ 深圳数位大数据科技有限公司 All Rights Reserved</span>
+            <span aria-hidden="true" class="opacity-60">|</span>
+            <span>粤ICP备15041214号</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      lucide.createIcons();
+
+      // ===== Download dropdown =====
+      document.querySelectorAll(".dl-dropdown").forEach((d) => {
+        const btn = d.querySelector("button");
+        btn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          document.querySelectorAll(".dl-dropdown.open").forEach((o) => {
+            if (o !== d) o.classList.remove("open");
+          });
+          d.classList.toggle("open");
+        });
+      });
+      document.addEventListener("click", () => {
+        document
+          .querySelectorAll(".dl-dropdown.open")
+          .forEach((d) => d.classList.remove("open"));
+      });
+
+      // Placeholder download buttons — prevent jump-to-top until real URLs land
+      document.addEventListener("click", (e) => {
+        const a = e.target.closest('a[href="#"]');
+        if (a) e.preventDefault();
+      });
+
+      const obs = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("in");
+              obs.unobserve(e.target);
+            }
+          });
+        },
+        { threshold: 0.1 },
+      );
+      document.querySelectorAll("[data-fade]").forEach((el) => obs.observe(el));
+    </script>
+    <script src="/DataMind/js/qiyu-kefu.js"></script>
+  </body>
+</html>
+
+
+
+
+
+
+
+
+
+

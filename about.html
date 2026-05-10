@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>关于我们 · DataMind</title>
+  <link rel="icon" type="image/png" href="./static/logo/logo-icon.png" />
+  <link rel="shortcut icon" type="image/png" href="./static/logo/logo-icon.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            paper: '#FAFAFB', surface: '#F1F2F4', surface2: '#E6E8EC',
+            ink: '#2D3748', ink2: '#2D3142', sub: '#5A6478', mute: '#8B95A8',
+            line: '#E5E7EB', line2: '#D1D5DB',
+            brand: '#0E80F0', brandDeep: '#0066D6', brandSoft: '#E6F2FE',
+          },
+          fontFamily: { sans: ['Inter', 'Noto Sans SC', 'system-ui', 'sans-serif'] },
+        }
+      }
+    }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    body { background: #FFFFFF; color: #2D3748; font-family: 'Inter','Noto Sans SC',system-ui,sans-serif; -webkit-font-smoothing: antialiased; letter-spacing: -0.01em; }
+    .display { letter-spacing: -0.025em; font-weight: 500; }
+
+    .card { background: #FFFFFF; border: 1px solid #ECEEF2; border-radius: 24px; transition: transform .25s ease, background .25s ease, border-color .25s ease; }
+    .card:hover { background: #FAFBFC; }
+    .card-deep { background: #F5F6F8; border-radius: 24px; }
+    .card-paper { background: #FFFFFF; border: 1px solid #E5E7EB; border-radius: 20px; }
+
+    .btn-primary { background: #0E80F0; color: #FFFFFF; transition: all .15s ease; border: 1px solid #0E80F0; }
+    .btn-primary:hover { background: #0066D6; border-color: #0066D6; }
+    .btn-ghost { background: transparent; color: #2D3748; border: 1px solid #D1D5DB; transition: all .15s ease; }
+    .btn-ghost:hover { border-color: #0E80F0; color: #0E80F0; }
+
+    .pill { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 5px 11px; border-radius: 999px; background: #FFFFFF; border: 1px solid #E5E7EB; color: #5A6478; }
+    .pill-brand { background: #E6F2FE; color: #0066D6; border-color: #BFDDFB; }
+    .dot { width: 6px; height: 6px; border-radius: 999px; background: #0E80F0; }
+
+    .lnk { position: relative; }
+    .lnk::after { content: ''; position: absolute; left: 0; right: 0; bottom: -3px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: left; transition: transform .3s ease; }
+    .lnk:hover::after { transform: scaleX(1); }
+
+    .blob { position: absolute; width: 520px; height: 520px; border-radius: 999px; filter: blur(120px); opacity: 0.55; pointer-events: none; }
+
+    section[id] { scroll-margin-top: 80px; }
+    [data-fade] { opacity: 0; transform: translateY(20px); transition: opacity .8s ease, transform .8s ease; }
+    [data-fade].in { opacity: 1; transform: translateY(0); }
+
+    .arrow-hover:hover .arrow-icon { transform: translateX(4px); }
+    .arrow-icon { transition: transform .25s ease; }
+
+    /* Download dropdown */
+    .dl-dropdown { position: relative; }
+    .dl-dropdown.open { z-index: 9999; }
+    .dl-menu { opacity: 0; pointer-events: none; transform: translateY(4px); transition: opacity .2s ease, transform .2s ease; z-index: 9999; box-shadow: 0 0 0 1px rgba(31,35,48,0.06), 0 24px 50px -16px rgba(31,35,48,0.30), 0 12px 24px -12px rgba(31,35,48,0.18); }
+    .dl-dropdown.open > .dl-menu { opacity: 1; pointer-events: auto; transform: translateY(0); }
+    .dl-dropdown.open > button > .dl-chev { transform: rotate(180deg); }
+    .dl-menu::before { content: ''; position: absolute; top: -6px; right: 24px; transform: rotate(45deg); width: 12px; height: 12px; background: #FFFFFF; border-left: 1px solid #E5E7EB; border-top: 1px solid #E5E7EB; border-top-left-radius: 3px; }
+  </style>
+</head>
+<body>
+
+  <!-- ======================= NAV ======================= -->
+  <header class="fixed top-0 inset-x-0 z-50 bg-paper/85 backdrop-blur-md border-b border-line">
+    <div class="max-w-[1280px] mx-auto px-6 py-2.5 flex items-center justify-between">
+      <a href="./index.html" class="flex items-center gap-2 pl-3">
+        <img src="./static/logo/logo-icon.png" alt="" class="h-7 w-auto">
+        <span class="font-bold tracking-[-0.03em] text-[17px] leading-none translate-y-px"><span class="text-ink">Data</span><span class="text-brand">Mind</span></span>
+      </a>
+      <nav class="hidden md:flex items-center gap-6 text-[14px] text-sub">
+        <a href="./index.html#geo" class="lnk hover:text-ink transition">商业地理数据</a>
+        <a href="./index.html#scenarios" class="lnk hover:text-ink transition">场景</a>
+        <a href="./index.html#workspace" class="lnk hover:text-ink transition">产品</a>
+        <a href="./pricing.html" class="lnk hover:text-ink transition">定价</a>
+        <a href="./about.html" class="lnk text-ink transition">关于我们</a>
+        <a href="./contact.html" class="lnk hover:text-ink transition">联系我们</a>
+        <a href="./index.html#faq" class="lnk hover:text-ink transition">常见问题</a>
+      </nav>
+      <div class="flex items-center gap-2 pr-1">
+        <div class="relative dl-dropdown">
+          <button type="button" class="btn-primary text-[13px] font-medium pl-4 pr-3 py-2 rounded-full inline-flex items-center gap-1.5">
+            免费下载
+            <svg class="dl-chev w-3 h-3 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+          </button>
+          <div class="dl-menu absolute right-0 top-full mt-2 w-60 bg-white border border-line rounded-2xl shadow-xl shadow-ink/10 p-2">
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface group transition">
+              <svg viewBox="0 0 384 512" fill="currentColor" class="w-4 h-4 text-ink"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" /></svg>
+              <div class="flex-1 text-left"><div class="text-[13.5px] font-semibold text-ink">macOS</div></div>
+              <i data-lucide="download" class="w-3.5 h-3.5 text-mute group-hover:text-brand transition"></i>
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface group transition">
+              <i data-lucide="monitor" class="w-4 h-4 text-ink"></i>
+              <div class="flex-1 text-left"><div class="text-[13.5px] font-semibold text-ink">Windows</div></div>
+              <i data-lucide="download" class="w-3.5 h-3.5 text-mute group-hover:text-brand transition"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ======================= HERO ======================= -->
+  <section class="relative pt-28 pb-12 overflow-hidden">
+    <div class="blob" style="background: #BFDDFB; top: -100px; right: -120px; opacity:0.45;"></div>
+    <div class="blob" style="background: #E6E8EC; top: 200px; left: -200px; opacity:0.7;"></div>
+    <div class="relative max-w-[1280px] mx-auto px-6">
+      <div class="text-center max-w-4xl mx-auto">
+        <div class="inline-flex items-center gap-2 pill mb-7" data-fade><span class="dot"></span><span>关于我们</span></div>
+        <h1 class="display text-[48px] md:text-[80px] leading-[1.04] text-ink" data-fade>
+          让大数据成为<br/>
+          <span class="text-brand">新引擎、新动力</span>
+        </h1>
+        <p class="mt-7 text-[17px] md:text-[18px] text-sub max-w-2xl mx-auto leading-[1.75]" data-fade>
+          DataMind 由<span class="text-ink font-medium">深圳数位大数据科技有限公司</span>打造，<br class="hidden md:block"/>
+          公司由蚂蚁金服、赛富等知名机构投资，是线下人、场大数据领军企业。
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 公司介绍 ======================= -->
+  <section class="py-12">
+    <div class="max-w-[1280px] mx-auto px-6">
+      <div class="card p-10 md:p-14" data-fade>
+        <div class="grid md:grid-cols-12 gap-10 items-start">
+          <div class="md:col-span-4">
+            <span class="pill mb-5">公司介绍</span>
+            <h2 class="display text-[32px] md:text-[44px] leading-[1.1] mt-5">基于 AI 的<br/>智能动态数据洞察</h2>
+          </div>
+          <div class="md:col-span-8 text-[15.5px] text-sub leading-[1.85]">
+            <p>
+              深圳数位大数据科技有限公司由蚂蚁金服、赛富等知名机构投资，是线下人、场大数据领军企业。
+              基于人工智能算法，实时洞察人和场的智能动态数据，为企业提供
+              <span class="text-ink font-medium">用户分析、用户理解及需求预测</span>
+              等全方位产品与服务。
+            </p>
+            <p class="mt-5">
+              我们让大数据成为新引擎、新动力，引领线上及线下进入普惠智能大数据时代。
+              DataMind 是公司面向 to-B 客户推出的 AI 数据助手产品线，把多年积累的
+              商业地理数据资产与 AI 能力封装为开箱即用的桌面应用，
+              让每一位业务人员都能像分析师一样工作。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 核心优势 ======================= -->
+  <section class="py-12">
+    <div class="max-w-[1280px] mx-auto px-6">
+      <div class="text-center mb-12" data-fade>
+        <span class="pill mb-5">核心优势</span>
+        <h2 class="display text-[36px] md:text-[56px] leading-[1.05] mt-5">十年技术积累<br/>沉淀为产品底座</h2>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <div class="card p-7 text-center group" data-fade>
+          <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-brandSoft flex items-center justify-center text-brand transition-transform group-hover:scale-105">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          </div>
+          <div class="text-[22px] md:text-[26px] font-bold text-ink leading-tight">军工级</div>
+          <div class="mt-2.5 text-[13.5px] text-sub leading-[1.6]">高精度室内定位技术</div>
+        </div>
+        <div class="card p-7 text-center group" data-fade>
+          <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-brandSoft flex items-center justify-center text-brand transition-transform group-hover:scale-105">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7"><circle cx="12" cy="9" r="6"/><polyline points="8.21 13.89 7 22 12 19 17 22 15.79 13.88"/></svg>
+          </div>
+          <div class="text-[22px] md:text-[26px] font-bold text-ink leading-tight">近 100 项</div>
+          <div class="mt-2.5 text-[13.5px] text-sub leading-[1.6]">发明专利及软件著作权</div>
+        </div>
+        <div class="card p-7 text-center group" data-fade>
+          <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-brandSoft flex items-center justify-center text-brand transition-transform group-hover:scale-105">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+          </div>
+          <div class="text-[22px] md:text-[26px] font-bold text-ink leading-tight">行业首创 8 级</div>
+          <div class="mt-2.5 text-[13.5px] text-sub leading-[1.6]">高精度定位能力</div>
+        </div>
+        <div class="card p-7 text-center group" data-fade>
+          <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-brandSoft flex items-center justify-center text-brand transition-transform group-hover:scale-105">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+          </div>
+          <div class="text-[22px] md:text-[26px] font-bold text-ink leading-tight">国内首家</div>
+          <div class="mt-2.5 text-[13.5px] text-sub leading-[1.6]">室内地理位置信息测绘公司</div>
+        </div>
+        <div class="card p-7 text-center group" data-fade>
+          <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-brandSoft flex items-center justify-center text-brand transition-transform group-hover:scale-105">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M8 10h.01"/><path d="M16 10h.01"/><path d="M12 10h.01"/><path d="M8 14h.01"/><path d="M16 14h.01"/><path d="M12 14h.01"/></svg>
+          </div>
+          <div class="text-[22px] md:text-[26px] font-bold text-ink leading-tight">300+</div>
+          <div class="mt-2.5 text-[13.5px] text-sub leading-[1.6]">覆盖全国城市</div>
+        </div>
+        <div class="card p-7 text-center group" data-fade>
+          <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-brandSoft flex items-center justify-center text-brand transition-transform group-hover:scale-105">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7"><path d="M3 12h4l3-9 4 18 3-9h4"/></svg>
+          </div>
+          <div class="text-[22px] md:text-[26px] font-bold text-ink leading-tight">30+ 亿</div>
+          <div class="mt-2.5 text-[13.5px] text-sub leading-[1.6]">每日生产感知数据</div>
+        </div>
+        <div class="card p-7 text-center group" data-fade>
+          <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-brandSoft flex items-center justify-center text-brand transition-transform group-hover:scale-105">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div class="text-[22px] md:text-[26px] font-bold text-ink leading-tight">18 万+</div>
+          <div class="mt-2.5 text-[13.5px] text-sub leading-[1.6]">测绘人员累计运营线下</div>
+        </div>
+        <div class="card p-7 text-center group" data-fade>
+          <div class="w-14 h-14 mx-auto mb-5 rounded-2xl bg-brandSoft flex items-center justify-center text-brand transition-transform group-hover:scale-105">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-7 h-7"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          </div>
+          <div class="text-[22px] md:text-[26px] font-bold text-ink leading-tight">日均百亿次</div>
+          <div class="mt-2.5 text-[13.5px] text-sub leading-[1.6]">精准位置判断</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 资质与合规 ======================= -->
+  <section class="py-12">
+    <div class="max-w-[1280px] mx-auto px-6">
+      <div class="text-center mb-12" data-fade>
+        <span class="pill mb-5">资质与合规</span>
+        <h2 class="display text-[36px] md:text-[56px] leading-[1.05] mt-5">合法合规<br/>是数据业务的底线</h2>
+        <p class="mt-6 text-[15px] text-sub max-w-2xl mx-auto leading-[1.7]">
+          数位拥有完整的国家级测绘、安全与高新技术资质。所有数据均经脱敏处理，不涉及个体隐私。
+        </p>
+      </div>
+      <div class="grid md:grid-cols-2 gap-3">
+        <div class="card p-8" data-fade>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-full bg-brandSoft flex items-center justify-center">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-brand"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            </div>
+            <h3 class="text-[17px] font-semibold text-ink leading-tight">国家地理测绘资质</h3>
+          </div>
+          <p class="text-[14px] text-sub leading-[1.8]">拥有合法合规的国家地理位置信息测绘资质。采集的群体数据经脱敏处理及 AI 智能模型分析，不涉及个体隐私，是合法进行室内 POI 采集测绘工作的企业单位。</p>
+        </div>
+        <div class="card p-8" data-fade>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-full bg-brandSoft flex items-center justify-center">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-brand"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            </div>
+            <h3 class="text-[17px] font-semibold text-ink leading-tight">国家网络安全等级保护三级</h3>
+          </div>
+          <p class="text-[14px] text-sub leading-[1.8]">深圳首家获得等保三级 V2.0 版的民营高科技企业。安全物理环境、安全通信网络及安全边界环境均经过认证，合法合规有保障。</p>
+        </div>
+        <div class="card p-8" data-fade>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-full bg-brandSoft flex items-center justify-center">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-brand"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            </div>
+            <h3 class="text-[17px] font-semibold text-ink leading-tight">国家高新技术企业</h3>
+          </div>
+          <p class="text-[14px] text-sub leading-[1.8]">荣获深圳市创新科技委员会、深圳市财政局、国家税务总局深圳市税务局联合颁发的"国家高新技术企业"认定证书。</p>
+        </div>
+        <div class="card p-8" data-fade>
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 rounded-full bg-brandSoft flex items-center justify-center">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5 text-brand"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            </div>
+            <h3 class="text-[17px] font-semibold text-ink leading-tight">计算机软件著作权及专利证书</h3>
+          </div>
+          <p class="text-[14px] text-sub leading-[1.8]">目前已申报发明专利及获得软件著作权近 100 项，前沿技术的开发能力和自主创新能力较强。</p>
+        </div>
+      </div>
+
+      <!-- 证书图 -->
+      <div class="card p-6 md:p-10 mt-3" data-fade>
+        <div class="text-center mb-6">
+          <h3 class="text-[18px] md:text-[20px] font-semibold text-ink">证书一览</h3>
+          <p class="mt-2 text-[13.5px] text-sub">等级保护备案 · 发明专利 · 软件著作权</p>
+        </div>
+        <img src="./static/about/certificates.png" alt="数位资质证书" loading="lazy" class="w-full h-auto rounded-xl"/>
+        <p class="mt-4 text-center text-[12px] text-sub/70">证书仅用于客户展示，恕不外发</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= 行业荣誉 ======================= -->
+  <section class="py-12">
+    <div class="max-w-[1280px] mx-auto px-6">
+      <div class="text-center mb-12" data-fade>
+        <span class="pill mb-5">行业荣誉</span>
+        <h2 class="display text-[36px] md:text-[56px] leading-[1.05] mt-5">来自行业的<span class="text-brand">认可</span></h2>
+        <p class="mt-6 text-[15px] text-sub max-w-2xl mx-auto leading-[1.7]">
+          多次荣获大数据、商业地理、零售智能等领域权威奖项，被行业、媒体、投资机构反复验证。
+        </p>
+      </div>
+
+      <!-- 汇总条 -->
+      <div class="card p-6 md:p-8 mb-3 grid grid-cols-3 divide-x divide-line" data-fade>
+        <div class="text-center px-3">
+          <div class="display text-[32px] md:text-[40px] text-brand leading-none">11+</div>
+          <div class="mt-2 text-[12.5px] text-sub">行业奖项</div>
+        </div>
+        <div class="text-center px-3">
+          <div class="display text-[32px] md:text-[40px] text-brand leading-none">5+</div>
+          <div class="mt-2 text-[12.5px] text-sub">权威评选机构</div>
+        </div>
+        <div class="text-center px-3">
+          <div class="display text-[32px] md:text-[40px] text-brand leading-none">3</div>
+          <div class="mt-2 text-[12.5px] text-sub">领域唯一入选</div>
+        </div>
+      </div>
+
+      <!-- 奖项卡片 -->
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3" id="honors-grid"></div>
+    </div>
+  </section>
+
+  <!-- ======================= 合作客户 ======================= -->
+  <section class="py-12">
+    <div class="max-w-[1280px] mx-auto px-6">
+      <div class="text-center mb-12" data-fade>
+        <span class="pill mb-5">合作客户</span>
+        <h2 class="display text-[36px] md:text-[56px] leading-[1.05] mt-5">服务过的<span class="text-brand">头部品牌</span></h2>
+        <p class="mt-6 text-[15px] text-sub max-w-2xl mx-auto leading-[1.7]">
+          覆盖商业地产、零售、金融、通信、市场研究等行业，我们的数据正在被这些客户用于真实业务决策。
+        </p>
+      </div>
+      <div class="card p-6 md:p-10" data-fade>
+        <img src="./static/about/clients.png" alt="DataMind 合作客户" loading="lazy" class="w-full h-auto"/>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= CTA ======================= -->
+  <section class="py-12">
+    <div class="max-w-[1280px] mx-auto px-6">
+      <div class="card p-10 md:p-14 grid md:grid-cols-12 gap-8 items-center" data-fade>
+        <div class="md:col-span-8">
+          <span class="pill mb-5">想进一步了解</span>
+          <h3 class="display text-[32px] md:text-[48px] leading-[1.08] mt-5">和我们聊聊<br/>你的业务场景</h3>
+          <p class="mt-5 text-[15.5px] text-sub max-w-[52ch] leading-[1.75]">
+            批量授权、定制数据接入、私有化部署，或其他业务咨询，我们一般 1 个工作日内回复。
+          </p>
+        </div>
+        <div class="md:col-span-4 flex md:justify-end">
+          <a href="./contact.html" class="btn-primary px-7 py-3.5 rounded-full font-medium inline-flex items-center gap-2 whitespace-nowrap text-[14px] arrow-hover">
+            联系我们
+            <i data-lucide="arrow-right" class="w-4 h-4 arrow-icon"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================= FOOTER ======================= -->
+  <footer class="py-14">
+    <div class="max-w-[1280px] mx-auto px-6">
+      <div class="grid md:grid-cols-12 gap-10">
+        <div class="md:col-span-4">
+          <div class="flex items-center gap-2.5">
+            <img src="./static/logo/logo-icon.png" alt="" class="h-8 w-auto">
+            <span class="font-bold tracking-[-0.03em] text-[20px] leading-none translate-y-px"><span class="text-ink">Data</span><span class="text-brand">Mind</span></span>
+          </div>
+          <p class="mt-4 text-[14px] text-sub leading-[1.7] max-w-[28ch]">像分析师一样工作的 AI 数据助手</p>
+        </div>
+        <div class="md:col-span-2"><div class="text-[12.5px] uppercase tracking-wider text-mute mb-4 font-medium">产品</div><ul class="space-y-2.5 text-[13.5px] text-sub"><li><a href="./index.html#geo" class="lnk hover:text-ink">商业地理数据</a></li><li><a href="./index.html#scenarios" class="lnk hover:text-ink">场景</a></li><li><a href="./pricing.html" class="lnk hover:text-ink">定价</a></li><li><a href="./index.html#download" class="lnk hover:text-ink">下载</a></li></ul></div>
+        <div class="md:col-span-2"><div class="text-[12.5px] uppercase tracking-wider text-mute mb-4 font-medium">公司</div><ul class="space-y-2.5 text-[13.5px] text-sub"><li><a href="./contact.html" class="lnk hover:text-ink">联系我们</a></li><li><a href="./about.html" class="lnk hover:text-ink">关于我们</a></li></ul></div>
+        <div class="md:col-span-2"><div class="text-[12.5px] uppercase tracking-wider text-mute mb-4 font-medium">法务</div><ul class="space-y-2.5 text-[13.5px] text-sub"><li><a href="./privacy.html" class="lnk hover:text-ink">隐私政策</a></li><li><a href="./terms.html" class="lnk hover:text-ink">服务条款</a></li></ul></div>
+      </div>
+      <div class="mt-12 pt-6 border-t border-line text-[12.5px] text-mute">
+        <div class="flex flex-wrap items-center justify-center gap-2 text-center">
+          <span>Copyright @ 深圳数位大数据科技有限公司 All Rights Reserved</span>
+          <span aria-hidden="true" class="opacity-60">|</span>
+          <span>粤ICP备15041214号</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    lucide.createIcons();
+
+    // === Honors data + render ===
+    const honors = [
+      { org: '36氪 WISE 2020',         award: '中国新经济之王 · 最具影响力企业' },
+      { org: '全球互联网数据大会',     award: '金 Data 奖 · 创新应用奖' },
+      { org: '金紫竹奖',               award: '年度通信行业大数据服务贡献企业' },
+      { org: '中科院',                 award: '年度商业地理大数据优秀服务商' },
+      { org: '中国地产华表奖',         award: '年度商业地理大数据领军奖' },
+      { org: '《中国数字营销生态图》', award: '2020 版数据服务供应商、商业智能领域' },
+      { org: '数据猿',                 award: '智能零售领域最具商业合作价值企业' },
+      { org: 'ELBS · 金猿奖 2020',     award: '大数据产业创新服务产品' },
+      { org: '中国科技创新',           award: '年度科技创新企业 100 强' },
+      { org: '小饭桌',                 award: '年度最具成长性企业（位置服务和时空大数据领域唯一入选）' },
+      { org: '创业黑马',               award: '产业互联网产业独角兽' },
+    ];
+    const honorsGrid = document.getElementById('honors-grid');
+    honors.forEach((h, i) => {
+      const num = String(i + 1).padStart(2, '0');
+      const card = document.createElement('div');
+      card.className = 'relative card p-6 overflow-hidden hover:-translate-y-0.5 transition-transform duration-200';
+      card.setAttribute('data-fade', '');
+      card.innerHTML = `
+        <div class="absolute top-0 left-6 right-6 h-[2px] bg-gradient-to-r from-brand/70 to-transparent rounded-full"></div>
+        <span class="absolute top-3 right-5 text-[36px] font-bold leading-none select-none tabular-nums" style="color: rgba(14,128,240,0.22)">${num}</span>
+        <div class="flex items-start gap-3.5">
+          <div class="shrink-0 w-10 h-10 rounded-xl bg-brandSoft flex items-center justify-center text-brand">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/><path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/><path d="M4 22h16"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/></svg>
+          </div>
+          <div class="min-w-0 flex-1 pr-6">
+            <div class="text-[11.5px] text-sub/80 tracking-wide mb-1.5 truncate">${h.org}</div>
+            <div class="text-[14px] font-semibold text-ink leading-[1.55]">${h.award}</div>
+          </div>
+        </div>`;
+      honorsGrid.appendChild(card);
+    });
+    lucide.createIcons();
+
+    // Download dropdown
+    document.querySelectorAll('.dl-dropdown').forEach(d => {
+      const btn = d.querySelector('button');
+      btn.addEventListener('click', e => {
+        e.stopPropagation();
+        document.querySelectorAll('.dl-dropdown.open').forEach(o => { if (o !== d) o.classList.remove('open'); });
+        d.classList.toggle('open');
+      });
+    });
+    document.addEventListener('click', () => { document.querySelectorAll('.dl-dropdown.open').forEach(d => d.classList.remove('open')); });
+    document.addEventListener('click', e => { const a = e.target.closest('a[href="#"]'); if (a) e.preventDefault(); });
+
+    // Scroll-triggered fade
+    if (window.gsap && window.ScrollTrigger) {
+      gsap.registerPlugin(ScrollTrigger);
+      gsap.utils.toArray('[data-fade]').forEach(el => {
+        gsap.fromTo(el, { y: 28, opacity: 0 }, {
+          y: 0, opacity: 1, duration: 0.8, ease: 'power2.out',
+          scrollTrigger: { trigger: el, start: 'top 88%', toggleActions: 'play none none reverse' }
+        });
+      });
+    } else {
+      const obs = new IntersectionObserver(entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in'); }), { threshold: 0.1 });
+      document.querySelectorAll('[data-fade]').forEach(el => obs.observe(el));
+    }
+  </script>
+</body>
+</html>
