@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python update_downloads.py)",
+      "Bash(python3 update_downloads.py)",
+      "Bash(node update_downloads.js)"
+    ]
+  }
+}
