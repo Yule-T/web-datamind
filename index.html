@@ -300,8 +300,14 @@
       .dl-dropdown {
         position: relative;
       }
-      .dl-dropdown.open {
-        z-index: 9999;
+      /* invisible bridge between button and menu so hover doesn't break */
+      .dl-dropdown::after {
+        content: "";
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        height: 20px;
       }
       .dl-menu {
         opacity: 0;
@@ -316,12 +322,13 @@
           0 24px 50px -16px rgba(31, 35, 48, 0.3),
           0 12px 24px -12px rgba(31, 35, 48, 0.18);
       }
-      .dl-dropdown.open > .dl-menu {
+      .dl-dropdown:hover > .dl-menu {
         opacity: 1;
         pointer-events: auto;
-        transform: translateY(0);
+        /* transform: translateY(0); */
       }
-      .dl-dropdown.open > button > .dl-chev {
+      .dl-dropdown:hover > button > .dl-chev,
+      .dl-dropdown:hover > a > .dl-chev {
         transform: rotate(180deg);
       }
       /* tiny arrow pointing to the button */
@@ -763,7 +770,14 @@
                 <svg viewBox="0 0 384 512" fill="currentColor" class="w-4 h-4 text-ink">
                   <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" />
                 </svg>
-                <div class="flex-1 text-left"><div class="text-[13.5px] font-semibold text-ink">macOS</div></div>
+                <div class="flex-1 text-left"><div class="text-[13.5px] font-semibold text-ink">MAC(ARM64)</div></div>
+                <i data-lucide="download" class="w-3.5 h-3.5 text-mute group-hover:text-brand transition"></i>
+              </a>
+              <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface group transition">
+                <svg viewBox="0 0 384 512" fill="currentColor" class="w-4 h-4 text-ink">
+                  <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" />
+                </svg>
+                <div class="flex-1 text-left"><div class="text-[13.5px] font-semibold text-ink">MAC(x64)</div></div>
                 <i data-lucide="download" class="w-3.5 h-3.5 text-mute group-hover:text-brand transition"></i>
               </a>
               <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface group transition">
@@ -811,20 +825,39 @@
             提问，AI 自动出图、写报告，从分析到归档全程在你的电脑上完成。
           </p>
           <div
-            class="mt-9 flex flex-wrap items-center justify-center gap-3"
+            class="mt-9 flex flex-wrap items-center justify-center gap-3 relative z-50"
             data-fade
           >
-            <a
-              href="#"
-              class="btn-primary text-[14px] font-medium px-6 py-3 rounded-full inline-flex items-center gap-2"
-            >
-              <svg viewBox="0 0 384 512" fill="currentColor" class="w-4 h-4">
-                <path
-                  d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"
-                />
-              </svg>
-              macOS 下载
-            </a>
+            <div class="relative dl-dropdown inline-flex">
+              <a
+                href="#"
+                class="btn-primary text-[14px] font-medium px-6 py-3 rounded-full inline-flex items-center gap-2"
+              >
+                <svg viewBox="0 0 384 512" fill="currentColor" class="w-4 h-4">
+                  <path
+                    d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"
+                  />
+                </svg>
+                macOS 下载
+                <svg class="dl-chev w-3 h-3 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+              </a>
+              <div class="dl-menu absolute left-1/2 -translate-x-1/2 top-full mt-2 w-56 bg-white border border-line rounded-2xl shadow-xl shadow-ink/10 p-2">
+                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface group transition">
+                  <svg viewBox="0 0 384 512" fill="currentColor" class="w-4 h-4 text-ink">
+                    <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" />
+                  </svg>
+                  <div class="flex-1 text-left"><div class="text-[13.5px] font-semibold text-ink">MAC(ARM64)</div></div>
+                  <i data-lucide="download" class="w-3.5 h-3.5 text-mute group-hover:text-brand transition"></i>
+                </a>
+                <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface group transition">
+                  <svg viewBox="0 0 384 512" fill="currentColor" class="w-4 h-4 text-ink">
+                    <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" />
+                  </svg>
+                  <div class="flex-1 text-left"><div class="text-[13.5px] font-semibold text-ink">MAC(x64)</div></div>
+                  <i data-lucide="download" class="w-3.5 h-3.5 text-mute group-hover:text-brand transition"></i>
+                </a>
+              </div>
+            </div>
             <a
               href="#"
               class="btn-primary text-[14px] font-medium px-6 py-3 rounded-full inline-flex items-center gap-2"
@@ -2343,7 +2376,7 @@
     <section id="download" class="py-12">
       <div class="max-w-[1280px] mx-auto px-6">
         <div
-          class="section-frame p-10 md:p-20 text-center relative overflow-hidden"
+          class="section-frame p-10 md:p-20 text-center relative"
           style="background: #0E80F0; color: #ffffff;"
           data-fade
         >
@@ -2359,15 +2392,34 @@
               本地下载，免费开始。
             </p>
             <div class="mt-10 flex flex-wrap items-center justify-center gap-3">
-              <a
-                href="#"
-                class="bg-white text-brand px-7 py-3.5 rounded-full font-semibold inline-flex items-center gap-2 text-[14px] hover:bg-paper transition"
+              <div class="relative dl-dropdown inline-flex">
+                <a
+                  href="#"
+                  class="bg-white text-brand px-7 py-3.5 rounded-full font-semibold inline-flex items-center gap-2 text-[14px] hover:bg-paper transition"
                 ><svg viewBox="0 0 384 512" fill="currentColor" class="w-4 h-4">
-                  <path
-                    d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"
-                  /></svg
-                >macOS 下载</a
-              >
+                    <path
+                      d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"
+                    /></svg
+                  >macOS 下载
+                  <svg class="dl-chev w-3 h-3 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9" /></svg>
+                </a>
+                <div class="dl-menu absolute left-1/2 -translate-x-1/2 top-full mt-2 w-56 bg-white border border-line rounded-2xl shadow-xl shadow-ink/10 p-2">
+                  <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface group transition">
+                    <svg viewBox="0 0 384 512" fill="currentColor" class="w-4 h-4 text-ink">
+                      <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" />
+                    </svg>
+                    <div class="flex-1 text-left"><div class="text-[13.5px] font-semibold text-ink">MAC(ARM64)</div></div>
+                    <i data-lucide="download" class="w-3.5 h-3.5 text-mute group-hover:text-brand transition"></i>
+                  </a>
+                  <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface group transition">
+                    <svg viewBox="0 0 384 512" fill="currentColor" class="w-4 h-4 text-ink">
+                      <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z" />
+                    </svg>
+                    <div class="flex-1 text-left"><div class="text-[13.5px] font-semibold text-ink">MAC(x64)</div></div>
+                    <i data-lucide="download" class="w-3.5 h-3.5 text-mute group-hover:text-brand transition"></i>
+                  </a>
+                </div>
+              </div>
               <a
                 href="#"
                 class="bg-white text-brand px-7 py-3.5 rounded-full font-semibold inline-flex items-center gap-2 text-[14px] hover:bg-paper transition"
@@ -2462,23 +2514,6 @@
 
     <script>
       lucide.createIcons();
-
-      // ===== Download dropdown =====
-      document.querySelectorAll(".dl-dropdown").forEach((d) => {
-        const btn = d.querySelector("button");
-        btn.addEventListener("click", (e) => {
-          e.stopPropagation();
-          document.querySelectorAll(".dl-dropdown.open").forEach((o) => {
-            if (o !== d) o.classList.remove("open");
-          });
-          d.classList.toggle("open");
-        });
-      });
-      document.addEventListener("click", () => {
-        document
-          .querySelectorAll(".dl-dropdown.open")
-          .forEach((d) => d.classList.remove("open"));
-      });
 
       // Placeholder download buttons — prevent jump-to-top until real URLs land
       document.addEventListener("click", (e) => {
