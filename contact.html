@@ -11,6 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
   <script>
@@ -372,10 +373,19 @@
   var typeMap = { arm64: 2, x64: 0, win: 1 };
   var links = document.querySelectorAll('a[data-type]');
 
+  var aesKey = CryptoJS.enc.Utf8.parse('QV1f3nHn2qm7i3xrj3Y9K9imDdGTjTu9');
+
+  function decrypt(text) {
+    if (text.charAt(0) === '{') return JSON.parse(text);
+    var bytes = CryptoJS.AES.decrypt(text, aesKey, { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7 });
+    return JSON.parse(bytes.toString(CryptoJS.enc.Utf8));
+  }
+
   Object.keys(typeMap).forEach(function (key) {
     fetch(base + '/v1/aiAppVersion/getLatestVersion?type=' + typeMap[key])
-      .then(function (r) { return r.json(); })
-      .then(function (res) {
+      .then(function (r) { return r.text(); })
+      .then(function (text) {
+        var res = decrypt(text);
         if (res && res.data && res.data.address) {
           links.forEach(function (a) {
             if (a.getAttribute('data-type') === key) a.href = res.data.address;
